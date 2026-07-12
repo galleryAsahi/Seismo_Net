@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>地震情報</title>
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-app: #14161c;
+  --bg-panel: #1b1e26;
+  --bg-card: #262a34;
+  --bg-card-hover: #2f333f;
+  --border: #383c48;
+  --text-main: #f2f3f5;
+  --text-sub: #9aa0ad;
+  --text-faint: #6b7280;
+  --accent: #4d8dff;
+  --danger: #ff3b30;
+  --safe: #3fb950;
+
+  --s1: rgb(242,242,255); --s1-fg:#1a1a2e;
+  --s2: rgb(0,170,255);   --s2-fg:#ffffff;
+  --s3: rgb(0,65,255);    --s3-fg:#ffffff;
+  --s4: rgb(250,230,150); --s4-fg:#1a1a1a;
+  --s5w: rgb(255,230,0);  --s5w-fg:#1a1a1a;
+  --s5s: rgb(255,153,0);  --s5s-fg:#ffffff;
+  --s6w: rgb(255,40,0);   --s6w-fg:#ffffff;
+  --s6s: rgb(165,0,33);   --s6s-fg:#ffffff;
+  --s7: rgb(180,0,104);   --s7-fg:#ffffff;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{
+  width:100%;height:100%;
+  background:var(--bg-app);
+  color:var(--text-main);
+  font-family:'M PLUS 1p',sans-serif;
+  overflow:hidden;
+}
+
+button{font-family:inherit;}
+
+#app{
+  display:flex;
+  width:100vw;
+  height:100vh;
+}
+
+/* ===== レイアウト ===== */
+#sidebar{
+  width:340px;
+  min-width:340px;
+  height:100%;
+  background:var(--bg-panel);
+  display:flex;
+  flex-direction:column;
+  border-right:1px solid var(--border);
+  z-index:2;
+}
+#sidebar-header{
+  padding:14px 16px 10px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+#sidebar-header h1{
+  font-size:16px;
+  font-weight:700;
+  letter-spacing:.02em;
+}
+#conn-status{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:11px;
+  color:var(--text-sub);
+}
+#conn-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--text-faint);
+  transition:background .3s;
+}
+#conn-dot.on{background:var(--safe);}
+#conn-dot.off{background:var(--danger);}
+#conn-dot.connecting{background:#e0a800;}
+
+/* ===== タブ切り替え ===== */
+#tab-bar{
+  display:flex;
+  gap:4px;
+  padding:8px 10px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.tab-btn{
+  flex:1;
+  appearance:none;
+  border:1px solid transparent;
+  background:transparent;
+  color:var(--text-sub);
+  font-size:12.5px;
+  font-weight:700;
+  padding:7px 4px;
+  border-radius:7px;
+  cursor:pointer;
+  transition:background .15s, color .15s;
+  position:relative;
+}
+.tab-btn:hover{
+  background:var(--bg-card);
+  color:var(--text-main);
+}
+.tab-btn.active{
+  background:var(--accent);
+  color:#fff;
+}
+.tab-btn .tab-badge{
+  display:inline-block;
+  min-width:16px;
+  padding:0 4px;
+  margin-left:5px;
+  border-radius:999px;
+  background:var(--danger);
+  color:#fff;
+  font-size:10px;
+  font-weight:700;
+  line-height:16px;
+  vertical-align:1px;
+}
+.tab-btn.active .tab-badge{
+  background:rgba(255,255,255,.35);
+}
+
+#event-list{
+  flex:1;
+  min-height:0;
+  overflow-y:auto;
+  padding:10px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+#event-list::-webkit-scrollbar{width:8px;}
+#event-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+
+#map-container{
+  flex:1;
+  height:100%;
+  position:relative;
+}
+#map{
+  width:100%;
+  height:100%;
+}
+.maplibregl-ctrl-attrib{display:none !important;}
+.maplibregl-ctrl-logo{display:none !important;}
+
+/* ===== 震度カード共通 ===== */
+.eq-card{
+  background:var(--bg-card);
+  border-radius:10px;
+  overflow:hidden;
+  cursor:pointer;
+  border:1px solid var(--border);
+  transition:background .15s, border-color .15s, transform .1s;
+  flex-shrink:0;
+}
+.eq-card:hover{
+  background:var(--bg-card-hover);
+  border-color:#4a4f5e;
+}
+.eq-card:active{transform:scale(0.995);}
+.eq-card.selected{
+  border-color:var(--accent);
+  box-shadow:0 0 0 1px var(--accent);
+}
+
+.eq-card-main{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:9px 10px;
+}
+
+.scale-badge{
+  width:48px;
+  height:48px;
+  min-width:48px;
+  border-radius:9px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:26px;
+  font-weight:900;
+  line-height:1;
+}
+.scale-badge.small-num{font-size:20px;}
+
+.eq-card-info{
+  flex:1;
+  min-width:0;
+}
+.eq-card-time{
+  font-size:10.5px;
+  color:var(--text-sub);
+  margin-bottom:1px;
+}
+.eq-card-place{
+  font-size:14px;
+  font-weight:700;
+  color:var(--text-main);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.eq-card-meta{
+  display:flex;
+  gap:8px;
+  margin-top:4px;
+}
+.meta-chip{
+  display:flex;
+  align-items:center;
+  gap:3px;
+  font-size:11px;
+  color:var(--text-sub);
+  padding-left:6px;
+  border-left:3px solid;
+}
+.meta-chip.mag{border-color:#ff9d33;}
+.meta-chip.depth{border-color:#f5e642;}
+
+.tsunami-banner{
+  font-size:12px;
+  font-weight:700;
+  text-align:center;
+  padding:7px 8px;
+  margin:0 8px 8px;
+  border-radius:999px;
+}
+.tsunami-banner.warning{
+  background:#e02020;
+  color:#fff;
+}
+.tsunami-banner.none{
+  background:#f2f2f2;
+  color:#222;
+}
+.tsunami-banner.watch{
+  background:#ffcf33;
+  color:#222;
+}
+
+/* 震度色 */
+.s1{ background:var(--s1); color:var(--s1-fg); }
+.s2{ background:var(--s2); color:var(--s2-fg); }
+.s3{ background:var(--s3); color:var(--s3-fg); }
+.s4{ background:var(--s4); color:var(--s4-fg); }
+.s5w{ background:var(--s5w); color:var(--s5w-fg); }
+.s5s{ background:var(--s5s); color:var(--s5s-fg); }
+.s6w{ background:var(--s6w); color:var(--s6w-fg); }
+.s6s{ background:var(--s6s); color:var(--s6s-fg); }
+.s7{ background:var(--s7); color:var(--s7-fg); }
+
+/* イベント種別アイコン(地震/EEW/津波) */
+.evt-icon{
+  width:16px;height:16px;
+  display:inline-block;
+  vertical-align:-3px;
+}
+
+/* ===== 空状態 ===== */
+#empty-state{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:40px 20px;
+  color:var(--text-faint);
+  text-align:center;
+  font-size:13px;
+}
+
+/* ===== モバイル ===== */
+@media (max-width: 720px){
+  #app{flex-direction:column;}
+  #sidebar{
+    width:100%;
+    min-width:0;
+    height:40%;
+    border-right:none;
+    border-bottom:1px solid var(--border);
+  }
+  #map-container{height:60%;}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="sidebar">
+    <div id="sidebar-header">
+      <h1>地震・津波情報</h1>
+      <div id="conn-status">
+        <span id="conn-dot" class="connecting"></span>
+        <span id="conn-text">接続中</span>
+      </div>
+    </div>
+    <div id="tab-bar">
+      <button class="tab-btn active" data-tab="earthquake" type="button">地震情報</button>
+      <button class="tab-btn" data-tab="eew" type="button">EEW</button>
+      <button class="tab-btn" data-tab="tsunami" type="button">津波</button>
+    </div>
+    <div id="event-list">
+      <div id="empty-state">情報を取得しています…</div>
+    </div>
+  </div>
+  <div id="map-container">
+    <div id="map"></div>
+  </div>
+</div>
+
+<script src="./stations_data.js"></script>
+<script src="./icons_data.js"></script>
+<script>
+(function(){
+'use strict';
+
+/* ============================================================
+   定数・ユーティリティ
+   ============================================================ */
+
+const HISTORY_URL = 'https://api.p2pquake.net/v2/history?codes=551&codes=552&limit=100';
+const WS_URL = 'https://api.p2pquake.net/v2/ws';
+
+// scale(10刻み) -> 表示用キー・クラス・ラベル
+function scaleInfo(scale){
+  if(scale == null) return {key:'-', cls:'', label:'-'};
+  if(scale >= 70) return {key:'7',  cls:'s7',  label:'7'};
+  if(scale >= 60) return {key:'6+', cls:'s6s', label:'6+'};
+  if(scale >= 55) return {key:'6-', cls:'s6w', label:'6-'};
+  if(scale >= 50) return {key:'5+', cls:'s5s', label:'5+'};
+  if(scale >= 45) return {key:'5-', cls:'s5w', label:'5-'};
+  if(scale >= 40) return {key:'4',  cls:'s4',  label:'4'};
+  if(scale >= 30) return {key:'3',  cls:'s3',  label:'3'};
+  if(scale >= 20) return {key:'2',  cls:'s2',  label:'2'};
+  if(scale >= 10) return {key:'1',  cls:'s1',  label:'1'};
+  return {key:'-', cls:'', label:'-'};
+}
+
+// 震度速報バッジ表示ラベル(震度アイコンセットのキーに合わせる: 1,2,3,4,5-,5+,6-,6+,7)
+function scaleBadgeLabel(scale){
+  const info = scaleInfo(scale);
+  return info.label;
+}
+
+function fmtTime(isoLike){
+  // p2pquakeのtimeは "2026/06/31 12:69:00" 形式(タイムゾーンなしJST)
+  if(!isoLike) return '';
+  return isoLike.replace(/:\d\d$/, '').replace(/^(\d{4})\/(\d{2})\/(\d{2})/, '$1/$2/$3');
+}
+
+function magLabel(mag){
+  if(mag == null || mag < 0) return '不明';
+  return 'M' + mag.toFixed(1);
+}
+
+function depthLabel(depth){
+  if(depth == null) return '-';
+  if(depth === 0) return 'ごく浅い';
+  if(depth < 0) return '不明';
+  return depth + 'km';
+}
+
+function tsunamiInfo(domesticTsunami){
+  switch(domesticTsunami){
+    case 'Warning':
+    case 'Watch':
+      return {cls:'warning', text:'津波警報等を発表中です'};
+    case 'Checking':
+      return {cls:'watch', text:'津波の有無を調査中です'};
+    case 'NonEffective':
+    case 'None':
+      return {cls:'none', text:'この地震による津波の心配はありません'};
+    default:
+      return null;
+  }
+}
+
+/* ============================================================
+   震度分布・観測点の地図表示
+   ============================================================ */
+
+const SCALE_COLOR = {
+  10:'rgb(242,242,255)', 20:'rgb(0,170,255)', 30:'rgb(0,65,255)',
+  40:'rgb(250,230,150)', 45:'rgb(255,230,0)', 50:'rgb(255,153,0)',
+  55:'rgb(255,40,0)', 60:'rgb(165,0,33)', 70:'rgb(180,0,104)'
+};
+function nearestScaleColor(scale){
+  const keys = [10,20,30,40,45,50,55,60,70];
+  let best = keys[0];
+  for(const k of keys){ if(scale >= k) best = k; }
+  return SCALE_COLOR[best];
+}
+
+// 震度速報など震源が不明なイベントでは、p2pquakeが緯度経度に -200 等の
+// 範囲外ダミー値を入れて返すことがある(nullではないため != null のチェックだけでは弾けない)。
+// これをそのままmaplibreのLngLatに渡すと "Invalid LngLat latitude" 例外が発生し、
+// renderScaleOnMapの残りの処理(震度ポリゴンの塗り分け・カメラ移動)が実行されなくなってしまう。
+// そのため座標を使う前に必ずこの関数で妥当性を確認する。
+function isValidLatLng(lat, lng){
+  return typeof lat === 'number' && typeof lng === 'number' &&
+    isFinite(lat) && isFinite(lng) &&
+    lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
+}
+
+// 区域コード -> 区域名(細分区域) の逆引き。stations_data.jsのacから収集。
+const AREA_NAME_BY_CODE = {};
+(function buildAreaNameIndex(){
+  for(const id in STATIONS){
+    const st = STATIONS[id];
+    if(st.ac && st.an) AREA_NAME_BY_CODE[st.ac] = st.an;
+  }
+})();
+
+// pointsの addr(細分区域名) から eq_saibun の code を引く名前逆引き
+const AREA_CODE_BY_NAME = {};
+(function buildAreaCodeIndex(){
+  for(const code in AREA_NAME_BY_CODE){
+    AREA_CODE_BY_NAME[AREA_NAME_BY_CODE[code]] = code;
+  }
+})();
+
+// 観測点名 -> 観測点情報 の逆引き(p2pquakeのpoints[].addrは観測点名で来るケースに対応)
+const STATION_BY_NAME = {};
+(function buildStationNameIndex(){
+  for(const id in STATIONS){
+    const st = STATIONS[id];
+    STATION_BY_NAME[st.n] = st;
+  }
+})();
+
+
+// GeoJSONジオメトリ(Polygon/MultiPolygon等)の全座標をLngLatBoundsに反映する
+function extendBoundsWithGeometry(bounds, geometry){
+  if(!geometry) return;
+  const walk = (coords, depth) => {
+    if(depth === 0){
+      bounds.extend(coords); // [lng, lat]
+      return;
+    }
+    for(const c of coords) walk(c, depth - 1);
+  };
+  const depthByType = {
+    Point: 0, MultiPoint: 1, LineString: 1,
+    MultiLineString: 2, Polygon: 2, MultiPolygon: 3
+  };
+  const depth = depthByType[geometry.type];
+  if(depth == null) return;
+  walk(geometry.coordinates, depth);
+}
+
+function renderScaleOnMap(event){
+  if(!mapReady) { onMapReady(() => renderScaleOnMap(event)); return; }
+
+  const points = event.points || [];
+
+  // --- 細分区域の塗り分け(区域名→最大震度) ---
+  // 震度速報(ScalePrompt)は points[].isArea が true になり、addr が細分区域名そのもの。
+  // 各地の震度に関する情報(DetailScale)は isArea が false で、addr は観測点名。
+  const areaMaxScale = {};
+  for(const p of points){
+    if(!p.isArea) continue; // isArea:false は観測点名なのでここでは対象外
+    const code = AREA_CODE_BY_NAME[p.addr];
+    if(!code) continue;
+    const sc = p.scale;
+    if(areaMaxScale[code] == null || sc > areaMaxScale[code]) areaMaxScale[code] = sc;
+  }
+  const saibunSrc = map.getSource('saibun-scale');
+  const areaBounds = new maplibregl.LngLatBounds();
+  let hasArea = false;
+  if(saibunSrc && window.__saibunFeatures){
+    const features = window.__saibunFeatures
+      .filter(f => areaMaxScale[f.properties.code] != null)
+      .map(f => ({
+        ...f,
+        properties: { ...f.properties, color: nearestScaleColor(areaMaxScale[f.properties.code]) }
+      }));
+    saibunSrc.setData({type:'FeatureCollection', features});
+    // 塗られたポリゴンの座標をすべてboundsに含める(震度速報でのカメラ移動用)
+    for(const f of features){
+      extendBoundsWithGeometry(areaBounds, f.geometry);
+      hasArea = true;
+    }
+  }
+
+  // --- 観測点表示 ---
+  const stationFeatures = [];
+  const bounds = new maplibregl.LngLatBounds();
+  let hasPoint = false;
+  for(const p of points){
+    if(p.isArea) continue;
+    // stations_data.js は地点名(addr)そのままではなく個別観測点。
+    // p2pquake の points[].addr は観測点名または細分区域名のため、名前一致で照合。
+    const match = STATION_BY_NAME[p.addr];
+    if(!match) continue;
+    const info = scaleInfo(p.scale);
+    stationFeatures.push({
+      type:'Feature',
+      geometry:{type:'Point', coordinates:[match.lo, match.la]},
+      properties:{ name: match.n, label: info.label, cls: info.cls, key: info.key, color: nearestScaleColor(p.scale), scaleOrder: p.scale ?? 0 }
+    });
+    bounds.extend([match.lo, match.la]);
+    hasPoint = true;
+  }
+  // 震度が弱い順に並べる -> 描画順で後になる(=上に重なる)のは震度が強い観測点
+  stationFeatures.sort((a, b) => a.properties.scaleOrder - b.properties.scaleOrder);
+  const stSrc = map.getSource('stations');
+  if(stSrc) stSrc.setData({type:'FeatureCollection', features: stationFeatures});
+
+  // --- 震源表示 ---
+  // 震度速報など震源が不明なイベントでは、p2pquakeが緯度経度に -200 等の範囲外ダミー値を
+  // 入れて返すことがある(null ではないため != null のチェックだけでは弾けない)。
+  // これをそのままmaplibreに渡すと例外が発生し、以降の描画・カメラ移動が止まってしまうため、
+  // isValidLatLng で範囲チェックしてから使用する。
+  const hyp = event.earthquake && event.earthquake.hypocenter;
+  const hypValid = !!hyp && isValidLatLng(hyp.latitude, hyp.longitude);
+  const hypSrc = map.getSource('hypocenter');
+  if(hypSrc){
+    if(hypValid){
+      hypSrc.setData({
+        type:'FeatureCollection',
+        features:[{ type:'Feature', geometry:{type:'Point', coordinates:[hyp.longitude, hyp.latitude]}, properties:{} }]
+      });
+    } else {
+      hypSrc.setData({type:'FeatureCollection', features:[]});
+    }
+  }
+
+  // --- カメラ移動 ---
+  // 震源・観測点・塗られた細分区域(震度速報)のすべてが視野に入るようboundsを統合する。
+  // 震度速報(震源不明)の場合は hasArea のみで cameraBounds が構築され、
+  // 塗られた震度ポリゴン全体にズーム・移動する。
+  const cameraBounds = new maplibregl.LngLatBounds();
+  let hasCameraTarget = false;
+  if(hasPoint){ cameraBounds.extend(bounds); hasCameraTarget = true; }
+  if(hasArea){ cameraBounds.extend(areaBounds); hasCameraTarget = true; }
+  if(hypValid){
+    cameraBounds.extend([hyp.longitude, hyp.latitude]);
+    hasCameraTarget = true;
+  }
+  if(hasCameraTarget){
+    map.fitBounds(cameraBounds, {padding:{top:60,bottom:60,left:60,right:60}, maxZoom:8.5, duration:800});
+  }
+}
+
+function clearScaleOnMap(){
+  if(!mapReady) return;
+  const saibunSrc = map.getSource('saibun-scale');
+  if(saibunSrc) saibunSrc.setData({type:'FeatureCollection', features:[]});
+  const stSrc = map.getSource('stations');
+  if(stSrc) stSrc.setData({type:'FeatureCollection', features:[]});
+  const hypSrc = map.getSource('hypocenter');
+  if(hypSrc) hypSrc.setData({type:'FeatureCollection', features:[]});
+}
+
+/* ============================================================
+   イベント一覧(状態管理・描画)
+   ============================================================ */
+
+const state = {
+  events: [],       // 表示用に正規化したイベント配列(新しい順)
+  selectedId: null,
+  seenIds: new Set(),
+  activeTab: 'earthquake' // 'earthquake' | 'eew' | 'tsunami'
+};
+
+const listEl = document.getElementById('event-list');
+
+// p2pquake生データ -> 表示用に正規化
+// p2pquakeのイベントID取得。
+// History API(/v2/history)のレスポンスは "id"、WebSocket配信のメッセージは "_id" と
+// フィールド名が異なる(WebSocketはMongoDBの _id をそのまま流用しているため)。
+// 両方に対応しないとWebSocket経由のイベントのidが undefined になり、
+// 重複防止(seenIds)やマージ処理が正しく機能しなくなる。
+function eqId(raw){
+  return raw.id != null ? raw.id : raw._id;
+}
+
+// raw.issue.type から情報段階を判定する。
+// ScalePrompt: 震度速報(震源不明、区域単位の震度のみ)
+// Destination: 震源情報(震源確定、震度情報なし)
+// DetailScale ほか: 各地の震度に関する情報＝地震情報(震源確定、観測点単位の震度あり)
+function eqStage(raw){
+  const t = raw.issue && raw.issue.type;
+  if(t === 'ScalePrompt') return 'prompt';
+  if(t === 'Destination') return 'destination';
+  return 'detail'; // DetailScale, Foreign等はまとめて「地震情報」段階として扱う
+}
+
+function normalizeEvent(raw){
+  if(raw.code === 551){
+    const eq = raw.earthquake || {};
+    const hyp = eq.hypocenter || {};
+    return {
+      id: eqId(raw),
+      code: 551,
+      type: 'earthquake',
+      stage: eqStage(raw),
+      time: eq.time,
+      place: hyp.name || '不明',
+      mag: hyp.magnitude,
+      depth: hyp.depth,
+      maxScale: eq.maxScale,
+      domesticTsunami: eq.domesticTsunami,
+      raw
+    };
+  }
+  if(raw.code === 552){
+    const areas = raw.areas || [];
+    let worst = null;
+    for(const a of areas){
+      if(!worst || tsunamiGradeRank(a.grade) > tsunamiGradeRank(worst.grade)) worst = a;
+    }
+    return {
+      id: eqId(raw),
+      code: 552,
+      type: 'tsunami',
+      time: raw.time,
+      place: worst ? worst.name : '津波予報',
+      grade: worst ? worst.grade : null,
+      areas,
+      raw
+    };
+  }
+  return null;
+}
+
+function tsunamiGradeRank(grade){
+  return {Watch:1, Warning:2, MajorWarning:3}[grade] || 0;
+}
+
+function scaleBadgeHtml(maxScale){
+  const info = scaleInfo(maxScale);
+  const small = (info.key && info.key.length >= 2) ? ' small-num' : '';
+  return `<div class="scale-badge ${info.cls}${small}">${info.label}</div>`;
+}
+
+function renderEventCard(evt){
+  const card = document.createElement('div');
+  card.className = 'eq-card';
+  card.dataset.id = evt.id;
+  if(evt.id === state.selectedId) card.classList.add('selected');
+
+  if(evt.type === 'earthquake'){
+    const tInfo = tsunamiInfo(evt.domesticTsunami);
+    card.innerHTML = `
+      <div class="eq-card-main">
+        ${scaleBadgeHtml(evt.maxScale)}
+        <div class="eq-card-info">
+          <div class="eq-card-time">${fmtTime(evt.time)}ごろ</div>
+          <div class="eq-card-place">${evt.place}</div>
+          <div class="eq-card-meta">
+            <span class="meta-chip mag">${magLabel(evt.mag)}</span>
+            <span class="meta-chip depth">${depthLabel(evt.depth)}</span>
+          </div>
+        </div>
+      </div>
+      ${tInfo ? `<div class="tsunami-banner ${tInfo.cls}">${tInfo.text}</div>` : ''}
+    `;
+  } else if(evt.type === 'tsunami'){
+    const gradeLabel = {MajorWarning:'大津波警報', Warning:'津波警報', Watch:'津波注意報'}[evt.grade] || '津波予報';
+    const badgeFg = evt.grade === 'Watch' ? '#12131a' : '#fff';
+    card.innerHTML = `
+      <div class="eq-card-main">
+        <div class="scale-badge" style="background:${TSUNAMI_GRADE_COLOR[evt.grade]||'#666'};color:${badgeFg};">
+          <svg class="evt-icon" viewBox="0 0 64 64" style="width:26px;height:26px;color:${badgeFg};" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 22 C10 16, 16 16, 22 22 C28 28, 34 28, 40 22 C46 16, 52 16, 58 22" opacity="0.55"/>
+            <path d="M4 33 C10 25, 17 25, 23 33 C29 41, 36 41, 42 33 C48 25, 55 25, 60 33" opacity="0.8"/>
+            <path d="M2 48 C9 39, 17 39, 24 48 C31 57, 39 57, 46 48 C51 41.5, 56 40, 61 41.5" stroke-width="3.4"/>
+          </svg>
+        </div>
+        <div class="eq-card-info">
+          <div class="eq-card-time">${fmtTime(evt.time)}発表</div>
+          <div class="eq-card-place">${gradeLabel}</div>
+          <div class="eq-card-meta">
+            <span class="meta-chip mag">${evt.areas.length}区域に発表</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  card.addEventListener('click', () => selectEvent(evt.id));
+  return card;
+}
+
+// アクティブなタブに応じた表示対象イベントを返す
+function eventsForTab(tab){
+  if(tab === 'earthquake') return state.events.filter(e => e.type === 'earthquake');
+  if(tab === 'tsunami') return state.events.filter(e => e.type === 'tsunami');
+  return []; // eewは今後実装予定のため常に空
+}
+
+const EMPTY_STATE_TEXT = {
+  earthquake: '情報を取得しています…',
+  eew: 'EEW(緊急地震速報)は近日対応予定です',
+  tsunami: '発表中の津波情報はありません'
+};
+
+function renderList(){
+  listEl.innerHTML = '';
+  const list = eventsForTab(state.activeTab);
+  if(list.length === 0){
+    const empty = document.createElement('div');
+    empty.id = 'empty-state';
+    empty.textContent = EMPTY_STATE_TEXT[state.activeTab] || '情報がありません';
+    listEl.appendChild(empty);
+    return;
+  }
+  const frag = document.createDocumentFragment();
+  for(const evt of list){
+    frag.appendChild(renderEventCard(evt));
+  }
+  listEl.appendChild(frag);
+}
+
+// タブ切り替えUIの初期化
+const tabBarEl = document.getElementById('tab-bar');
+function setActiveTab(tab){
+  state.activeTab = tab;
+  tabBarEl.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tab === tab);
+  });
+  renderList();
+}
+tabBarEl.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => setActiveTab(btn.dataset.tab));
+});
+
+// 震源(震央地名)が同一かどうかを判定する。
+// p2pquakeのhypocenter.nameは「駿河湾」「福島県沖」のような気象庁の震央地名がそのまま入るため、
+// 文字列一致で十分同一震源とみなせる。"不明"同士は誤マージを避けるため一致とみなさない。
+function sameHypocenter(placeA, placeB){
+  if(!placeA || !placeB) return false;
+  if(placeA === '不明' || placeB === '不明') return false;
+  return placeA === placeB;
+}
+
+// 新しく来た地震情報(newEvt)を、既存イベント一覧の中から「同一地震」とみなせるものと
+// マージすべきか判定する。マージ対象が見つかればそのインデックスを、なければ -1 を返す。
+//   震度速報 -> 震度速報          : 発生時刻(time)が完全一致(震度が更新された第2報以降を想定)
+//   震度速報 -> 震源情報/地震情報 : 発生時刻(time)が完全一致
+//   震源情報 -> 地震情報          : 震央地名が一致
+function findMergeTargetIndex(newEvt){
+  if(newEvt.type !== 'earthquake') return -1;
+  for(let i = 0; i < state.events.length; i++){
+    const old = state.events[i];
+    if(old.type !== 'earthquake') continue;
+    if(old.id === newEvt.id) continue;
+
+    if(old.stage === 'prompt' && newEvt.stage === 'prompt'){
+      if(old.time && newEvt.time && old.time === newEvt.time) return i;
+    }
+    if(old.stage === 'prompt' && (newEvt.stage === 'destination' || newEvt.stage === 'detail')){
+      if(old.time && newEvt.time && old.time === newEvt.time) return i;
+    }
+    if(old.stage === 'destination' && newEvt.stage === 'detail'){
+      if(sameHypocenter(old.place, newEvt.place)) return i;
+    }
+  }
+  return -1;
+}
+
+// 段階に応じて、マージ元(old)からマージ先(newEvt)へ情報を引き継ぐ。
+//   震度速報 -> 震度速報 : 何も引き継がない(新しい震度速報の内容でそのまま置き換える)
+//   震度速報 -> 震源情報 : 各地の震度(points)・最大震度(maxScale)を引き継ぐ
+//   震源情報 -> 地震情報 : 何も引き継がない
+function mergeEventInfo(old, newEvt){
+  if(old.stage === 'prompt' && newEvt.stage === 'destination'){
+    // 震源情報には震度分布が含まれないため、震度速報のpoints/maxScaleを引き継いで
+    // 地図上の震度塗り分けが失われないようにする。
+    if((!newEvt.raw.points || newEvt.raw.points.length === 0) && old.raw.points && old.raw.points.length > 0){
+      newEvt.raw = { ...newEvt.raw, points: old.raw.points };
+    }
+    if(newEvt.maxScale == null && old.maxScale != null){
+      newEvt.maxScale = old.maxScale;
+      newEvt.raw = { ...newEvt.raw, earthquake: { ...newEvt.raw.earthquake, maxScale: old.maxScale } };
+    }
+  }
+  // prompt->prompt, destination->detail は引き継ぎなし(何もしない)
+  return newEvt;
+}
+
+// source: 'ws'(WebSocket配信) | 'history'(履歴API/初期・再接続時の補完)
+// WebSocketで到着した地震イベント(551)は、ユーザーが他のカードを選択中でも
+// 強制的にそのイベントへ選択を切り替え、地図表示も追従させる。
+// (履歴補完で流れる過去イベントでは選択を奪わない)
+function addEvent(raw, source){
+  const evt = normalizeEvent(raw);
+  if(!evt) return;
+  if(state.seenIds.has(evt.id)) return; // 重複防止
+  state.seenIds.add(evt.id);
+
+  let mergedFromLive = false; // WSで来た同一地震のマージ更新か
+  const mergeIdx = findMergeTargetIndex(evt);
+  if(mergeIdx !== -1){
+    const old = state.events[mergeIdx];
+    const merged = mergeEventInfo(old, evt);
+    // 同一地震とみなし、古いカードは残さず新しい情報に置き換える(1件のみ表示)
+    state.events.splice(mergeIdx, 1);
+    state.events.unshift(merged);
+    if(state.selectedId === old.id) state.selectedId = merged.id;
+    mergedFromLive = (source === 'ws');
+  } else {
+    state.events.unshift(evt); // 最新を先頭に
+  }
+  renderList();
+
+  // 津波イベントなら発表区域マップを更新してレイヤーに反映
+  if(evt.type === 'tsunami'){
+    latestTsunamiAreas = new Map();
+    for(const a of evt.areas){
+      if(a.grade) latestTsunamiAreas.set(a.name, a.grade);
+    }
+    updateTsunamiLayer();
+  }
+
+  // マージによって選択中イベントの中身が更新された場合は地図表示も更新する
+  if(state.selectedId === evt.id && evt.type === 'earthquake'){
+    renderScaleOnMap(evt.raw);
+  }
+
+  // WebSocket配信で来た「地震情報」は、ユーザーの選択状態に関わらず最新へ移動する。
+  // 新規到着はもちろん、既存カードへのマージ更新(震度速報→震源情報→地震情報 等の段階更新)
+  // でも同様に、その最新イベントに選択を切り替える。
+  if(source === 'ws' && evt.type === 'earthquake'){
+    if(state.selectedId !== evt.id || mergedFromLive){
+      selectEvent(evt.id);
+    }
+  }
+}
+
+function selectEvent(id){
+  state.selectedId = id;
+  document.querySelectorAll('.eq-card').forEach(el => {
+    el.classList.toggle('selected', el.dataset.id === id);
+  });
+  const evt = state.events.find(e => e.id === id);
+  if(!evt) return;
+  if(evt.type === 'earthquake'){
+    renderScaleOnMap(evt.raw);
+  } else {
+    clearScaleOnMap();
+  }
+}
+
+
+
+// 気象庁「気象情報の配色に関する設定指針」(2012年5月)に準拠
+// 大津波警報:赤紫(180,0,104) 津波警報:赤(255,40,0) 津波注意報:黄(250,245,0)
+const TSUNAMI_GRADE_COLOR = {
+  MajorWarning: 'rgb(180,0,104)',
+  Warning: 'rgb(255,40,0)',
+  Watch: 'rgb(250,245,0)'
+};
+
+// 最新の津波イベント(code:552)から発表中区域を保持
+let latestTsunamiAreas = null; // Map<name, grade>
+
+function updateTsunamiLayer(){
+  if(!mapReady){ onMapReady(updateTsunamiLayer); return; }
+  const src = map.getSource('tsunami-forecast');
+  if(!src || !window.__tsunamiFeatures) return;
+
+  if(!latestTsunamiAreas || latestTsunamiAreas.size === 0){
+    src.setData({type:'FeatureCollection', features: window.__tsunamiFeatures.map(f => ({...f, properties:{...f.properties}}))});
+    return;
+  }
+  const features = window.__tsunamiFeatures.map(f => {
+    const grade = latestTsunamiAreas.get(f.properties.name);
+    const color = grade ? (TSUNAMI_GRADE_COLOR[grade] || TSUNAMI_GRADE_COLOR.Watch) : undefined;
+    const props = {...f.properties};
+    if(color){ props.color = color; props.grade = grade; }
+    else { delete props.color; delete props.grade; }
+    return {...f, properties: props};
+  });
+  // 危険度が高い等級(大津波警報 > 警報 > 注意報)ほど後ろ(=前面)に描画されるよう並べ替える
+  features.sort((a, b) => tsunamiGradeRank(a.properties.grade) - tsunamiGradeRank(b.properties.grade));
+  src.setData({type:'FeatureCollection', features});
+}
+
+
+
+let map = null;
+let mapReady = false;
+const pendingMapTasks = [];
+function onMapReady(fn){
+  if(mapReady) fn(); else pendingMapTasks.push(fn);
+}
+
+function initMap(){
+  map = new maplibregl.Map({
+    container: 'map',
+    style: {
+      version: 8,
+      sources: {},
+      layers: [],
+      glyphs: 'https://fonts.openmaptiles.org/{fontstack}/{range}.pbf'
+    },
+    center: [138.5, 37.0],
+    zoom: 4.4,
+    minZoom: 2,
+    maxZoom: 8.5,
+    attributionControl: false
+  });
+
+  map.addControl(new maplibregl.NavigationControl({showCompass:false}), 'top-right');
+
+  map.on('load', async () => {
+    // --- 背景(海) ---
+    map.addLayer({
+      id:'background', type:'background',
+      paint:{ 'background-color':'#182231' }
+    });
+
+    // geojsonは全て並列でfetch開始(eq_saibun.geojsonを最優先で処理するため待ち順を分離)
+    const saibunPromise = fetch('./eq_saibun.geojson').then(r => r.json());
+    const worldPromise = fetch('./world.geojson').then(r => r.json());
+    const tsunamiPromise = fetch('./tsunami_forecast.geojson').then(r => r.json());
+
+    // --- 震度細分区域(境界)を最優先で表示 ---
+    const saibun = await saibunPromise;
+    window.__saibunFeatures = saibun.features;
+    map.addSource('saibun', {type:'geojson', data: saibun});
+    map.addLayer({
+      id:'saibun-fill', type:'fill', source:'saibun',
+      paint:{ 'fill-color':'#4D5367', 'fill-opacity':1 }
+    });
+    map.addLayer({
+      id:'saibun-line', type:'line', source:'saibun',
+      paint:{ 'line-color':'#6C7288', 'line-width':0.7 }
+    });
+    // 震度色オーバーレイ(選択イベントの区域ごと最大震度)
+    map.addSource('saibun-scale', {type:'geojson', data: {type:'FeatureCollection', features:[]}});
+    map.addLayer({
+      id:'saibun-scale-fill', type:'fill', source:'saibun-scale',
+      paint:{ 'fill-color': ['get','color'], 'fill-opacity':0.85 }
+    });
+    map.addLayer({
+      id:'saibun-scale-line', type:'line', source:'saibun-scale',
+      paint:{ 'line-color':'#12131a', 'line-width':0.8 }
+    });
+
+    // --- 世界地図(海外の陸地)。既存レイヤーの下に挿入して重ね順を保つ ---
+    const world = await worldPromise;
+    map.addSource('world', {type:'geojson', data: world});
+    map.addLayer({
+      id:'world-fill', type:'fill', source:'world',
+      paint:{ 'fill-color':'#4D5367', 'fill-opacity':1 }
+    }, 'saibun-fill');
+    map.addLayer({
+      id:'world-line', type:'line', source:'world',
+      paint:{ 'line-color':'#6C7288', 'line-width':0.6 }
+    }, 'saibun-fill');
+
+    // --- 津波予報区(発表中の区域のみ着色。常時重ねて表示) ---
+    const tsunamiGeo = await tsunamiPromise;
+    window.__tsunamiFeatures = tsunamiGeo.features;
+    map.addSource('tsunami-forecast', {type:'geojson', data: tsunamiGeo});
+    map.addLayer({
+      id:'tsunami-forecast-line', type:'line', source:'tsunami-forecast',
+      layout:{
+        'line-join': 'round',
+        'line-cap': 'round'
+      },
+      paint:{
+        'line-color': ['coalesce', ['get','color'], 'rgba(0,0,0,0)'],
+        'line-width': ['match', ['get','grade'], 'MajorWarning', 10, 5],
+        'line-blur': 0.6,
+        'line-opacity': ['case', ['has','color'], 0.95, 0]
+      }
+    });
+
+    // --- 観測点(イベント選択時のみ表示) ---
+    // 震度アイコン(icons_data.js の ICON_DATA_URIS)をmapに画像として登録
+    await Promise.all(Object.entries(ICON_DATA_URIS).map(([key, dataUri]) => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          if(!map.hasImage(`quake-icon-${key}`)) map.addImage(`quake-icon-${key}`, img);
+          resolve();
+        };
+        img.onerror = resolve;
+        img.src = dataUri;
+      });
+    }));
+
+    map.addSource('stations', {type:'geojson', data: {type:'FeatureCollection', features:[]}});
+    map.addLayer({
+      id:'stations-circle', type:'symbol', source:'stations',
+      layout:{
+        'icon-image': ['concat', 'quake-icon-', ['get','key']],
+        'icon-size': [
+          'interpolate', ['linear'], ['zoom'],
+          4, 0.16,
+          6, 0.22,
+          9, 0.32,
+          12, 0.42
+        ],
+        'icon-allow-overlap': true,
+        'icon-ignore-placement': true,
+        // icon-allow-overlap:trueの場合、sort-keyが大きいほど前面に描画される
+        'symbol-sort-key': ['get', 'scaleOrder']
+      }
+    });
+
+    // --- 震源アイコン(赤い×印、Canvasで生成) ---
+    {
+      const size = 64;
+      const canvas = document.createElement('canvas');
+      canvas.width = size; canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      ctx.strokeStyle = '#ff2d2d';
+      ctx.lineWidth = 9;
+      ctx.lineCap = 'round';
+      const pad = 14;
+      ctx.beginPath();
+      ctx.moveTo(pad, pad); ctx.lineTo(size - pad, size - pad);
+      ctx.moveTo(size - pad, pad); ctx.lineTo(pad, size - pad);
+      ctx.stroke();
+      map.addImage('quake-hypocenter', ctx.getImageData(0, 0, size, size));
+    }
+    map.addSource('hypocenter', {type:'geojson', data: {type:'FeatureCollection', features:[]}});
+    map.addLayer({
+      id:'hypocenter-icon', type:'symbol', source:'hypocenter',
+      layout:{
+        'icon-image': 'quake-hypocenter',
+        'icon-size': [
+          'interpolate', ['linear'], ['zoom'],
+          4, 0.3,
+          6, 0.4,
+          9, 0.55,
+          12, 0.7
+        ],
+        'icon-allow-overlap': true,
+        'icon-ignore-placement': true
+      }
+    });
+
+    mapReady = true;
+    pendingMapTasks.forEach(fn => fn());
+    pendingMapTasks.length = 0;
+    updateTsunamiLayer();
+  });
+}
+/* ============================================================
+   データ取得・WebSocket接続
+   ============================================================ */
+
+const connDot = document.getElementById('conn-dot');
+const connText = document.getElementById('conn-text');
+function setConnStatus(status){
+  connDot.className = status;
+  connText.textContent = {on:'接続中', off:'切断', connecting:'再接続中'}[status] || status;
+}
+
+let ws = null;
+let reconnectAttempts = 0;
+let reconnectTimer = null;
+let lastEventTime = 0; // 直近に受信したイベントのUnix time(ms) 目安
+
+async function fetchHistory(){
+  try{
+    const res = await fetch(HISTORY_URL);
+    if(!res.ok) throw new Error('history fetch failed: ' + res.status);
+    const list = await res.json();
+    // 履歴APIは新しい順で返る想定 -> 古い順に並べ替えてから追加(addEventは先頭追加のため)
+    const ordered = [...list].sort((a,b) => new Date(a.time) - new Date(b.time));
+    for(const raw of ordered){
+      addEvent(raw, 'history');
+      const t = Date.parse(raw.time);
+      if(!isNaN(t) && t > lastEventTime) lastEventTime = t;
+    }
+  }catch(err){
+    console.error('履歴取得に失敗しました', err);
+  }
+}
+
+// 再接続時、取りこぼした分を履歴APIから補完
+async function fillGapFromHistory(){
+  try{
+    const res = await fetch(HISTORY_URL);
+    if(!res.ok) return;
+    const list = await res.json();
+    const ordered = [...list].sort((a,b) => new Date(a.time) - new Date(b.time));
+    for(const raw of ordered){
+      if(!state.seenIds.has(eqId(raw))) addEvent(raw, 'history');
+    }
+  }catch(err){
+    console.error('補完取得に失敗しました', err);
+  }
+}
+
+function connectWebSocket(){
+  setConnStatus('connecting');
+  try{
+    ws = new WebSocket(WS_URL);
+  }catch(err){
+    scheduleReconnect();
+    return;
+  }
+
+  ws.onopen = () => {
+    reconnectAttempts = 0;
+    setConnStatus('on');
+    // 再接続時は取りこぼし補完
+    fillGapFromHistory();
+  };
+
+  ws.onmessage = (msg) => {
+    try{
+      const raw = JSON.parse(msg.data);
+      if(raw.code === 551 || raw.code === 552){
+        addEvent(raw, 'ws');
+      }
+    }catch(err){
+      console.error('メッセージの解析に失敗しました', err);
+    }
+  };
+
+  ws.onclose = () => {
+    setConnStatus('off');
+    scheduleReconnect();
+  };
+
+  ws.onerror = () => {
+    ws.close();
+  };
+}
+
+function scheduleReconnect(){
+  if(reconnectTimer) return;
+  const delay = Math.min(30000, 1000 * Math.pow(2, reconnectAttempts));
+  reconnectAttempts++;
+  setConnStatus('connecting');
+  reconnectTimer = setTimeout(() => {
+    reconnectTimer = null;
+    connectWebSocket();
+  }, delay);
+}
+
+/* ============================================================
+   初期化
+   ============================================================ */
+
+function waitForMapReady(){
+  return new Promise(resolve => onMapReady(resolve));
+}
+
+async function init(){
+  initMap();
+  await waitForMapReady(); // 地図(geojson)の初期表示が終わるまでイベント一覧の取得・表示を待つ
+  await fetchHistory();
+  selectLatestEarthquakeByDefault();
+  connectWebSocket();
+}
+
+// 起動時、一覧の中から最新(=先頭)の地震情報を自動選択し、地図にデフォルト表示する。
+// 履歴には地震(551)・津波(552)が混在するため、type==='earthquake' のものだけを対象にする。
+function selectLatestEarthquakeByDefault(){
+  if(state.selectedId != null) return; // 既に何か選択済みなら上書きしない
+  const latest = state.events.find(e => e.type === 'earthquake');
+  if(latest) selectEvent(latest.id);
+}
+
+init();
+
+})();
+</script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
