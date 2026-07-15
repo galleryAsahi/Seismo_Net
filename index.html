@@ -236,6 +236,159 @@ button{font-family:inherit;}
   border-bottom:1px solid var(--border);
 }
 .settings-info-row:last-child{ border-bottom:none; }
+
+/* ===== EEWジェネレータ(テスト配信フォーム) ===== */
+.eew-gen-note{
+  font-size:11.5px;
+  color:var(--text-sub);
+  line-height:1.5;
+  padding:0 6px 10px;
+}
+.eew-gen-form{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.eew-gen-row{
+  display:flex;
+  gap:8px;
+}
+.eew-gen-row > *{
+  flex:1;
+  min-width:0;
+}
+.eew-gen-field{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.eew-gen-label{
+  font-size:11px;
+  font-weight:700;
+  color:var(--text-sub);
+  padding:0 2px;
+}
+.eew-gen-input{
+  width:100%;
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  color:var(--text-main);
+  font-family:inherit;
+  font-size:13px;
+  border-radius:8px;
+  padding:8px 10px;
+  outline:none;
+  transition:border-color .15s;
+}
+.eew-gen-input:focus{
+  border-color:var(--accent);
+}
+select.eew-gen-input{
+  appearance:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%239aa0ad'><path d='M5.5 7.5l4.5 4.5 4.5-4.5z'/></svg>");
+  background-repeat:no-repeat;
+  background-position:right 8px center;
+  background-size:16px;
+  padding-right:28px;
+}
+select.eew-gen-input[multiple]{
+  appearance:auto;
+  background-image:none;
+  padding-right:10px;
+}
+select.eew-gen-input[multiple] option{
+  padding:4px 6px;
+  border-radius:4px;
+}
+select.eew-gen-input[multiple] option:checked{
+  background:var(--accent);
+  color:#fff;
+}
+.eew-gen-check{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:12.5px;
+  color:var(--text-main);
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:8px 10px;
+  cursor:pointer;
+}
+.eew-gen-check input{
+  width:16px;
+  height:16px;
+  accent-color:var(--accent);
+  cursor:pointer;
+}
+.eew-gen-check-wide{
+  width:100%;
+}
+.eew-gen-field.is-disabled{
+  opacity:0.45;
+  pointer-events:none;
+}
+.eew-gen-actions{
+  display:flex;
+  gap:8px;
+  margin-top:4px;
+}
+.eew-gen-btn{
+  flex:1;
+  appearance:none;
+  border:1px solid var(--border);
+  background:var(--bg-card);
+  color:var(--text-main);
+  font-family:inherit;
+  font-size:13px;
+  font-weight:700;
+  border-radius:8px;
+  padding:10px 12px;
+  cursor:pointer;
+  transition:background .15s, border-color .15s;
+}
+.eew-gen-btn:hover{
+  background:var(--bg-card-hover);
+}
+.eew-gen-btn.primary{
+  background:var(--accent);
+  border-color:var(--accent);
+  color:#fff;
+}
+.gen-type-switch{
+  display:flex;
+  gap:4px;
+  padding:3px;
+  background:var(--bg-app);
+  border:1px solid var(--border);
+  border-radius:10px;
+  margin:0 6px 12px;
+}
+.gen-type-btn{
+  flex:1;
+  appearance:none;
+  border:none;
+  background:transparent;
+  color:var(--text-sub);
+  font-size:12.5px;
+  font-weight:700;
+  padding:8px 6px;
+  border-radius:7px;
+  cursor:pointer;
+  transition:background .15s, color .15s;
+}
+.gen-type-btn:hover{
+  color:var(--text-main);
+}
+.gen-type-btn.active{
+  background:var(--accent);
+  color:#fff;
+}
+.gen-panel[hidden]{ display:none; }
+.eew-gen-btn.primary:hover{
+  filter:brightness(1.08);
+}
 .settings-info-value{ color:var(--text-main); font-weight:500; }
 
 #event-list{
@@ -371,6 +524,7 @@ button{font-family:inherit;}
    カード全体は濃いグレー単色地。ヘッダー帯・震度/長周期地震動階級の帯は
    震度配色(.s1〜.s7)をそのまま帯の背景色として使う。 */
 .eew-card{
+  --eew-outline-color: #525252;
   background:#8a8a8a;
   border-radius:12px;
   overflow:hidden;
@@ -378,6 +532,28 @@ button{font-family:inherit;}
   flex-shrink:0;
   color:#fff;
   padding:10px;
+  text-shadow:
+    -1.4px -1.4px 0 var(--eew-outline-color),
+     1.4px -1.4px 0 var(--eew-outline-color),
+    -1.4px  1.4px 0 var(--eew-outline-color),
+     1.4px  1.4px 0 var(--eew-outline-color),
+     0   -1.4px 0 var(--eew-outline-color),
+     0    1.4px 0 var(--eew-outline-color),
+    -1.4px  0   0 var(--eew-outline-color),
+     1.4px  0   0 var(--eew-outline-color),
+    -1.4px -1.4px 0 var(--eew-outline-color),
+     1.4px -1.4px 0 var(--eew-outline-color),
+    -1.4px  1.4px 0 var(--eew-outline-color),
+     1.4px  1.4px 0 var(--eew-outline-color),
+    -1.4px -1.4px 0 var(--eew-outline-color),
+     1.4px -1.4px 0 var(--eew-outline-color),
+    -1.4px  1.4px 0 var(--eew-outline-color),
+     1.4px  1.4px 0 var(--eew-outline-color);
+}
+/* 震度・長周期地震動バッジ(色つき背景の帯)は気象庁配色の文字色(--sX-fg)をそのまま使うため、
+   縁取りを付けると逆に視認性が落ちる(白地に黒文字の場合など)。帯の中だけ縁取りを打ち消す。 */
+.eew-intensity-row, .eew-lpgm-row, .eew-kind-tag{
+  text-shadow:none;
 }
 .eew-card.selected{
   box-shadow:0 0 0 2px var(--accent);
@@ -502,12 +678,26 @@ button{font-family:inherit;}
   padding-left:10px;
   border-left:5px solid;
 }
-.eew-warn-text{
+.eew-note-line{
+  line-height:1.5;
+  padding:2px 2px 0;
+}
+.eew-note-line.eew-note-a{
   font-size:14px;
   font-weight:700;
   color:#fff;
-  line-height:1.5;
-  padding:2px 2px 0;
+}
+.eew-note-line.eew-note-b{
+  font-size:12px;
+  font-weight:500;
+  color:#fff;
+  opacity:.85;
+}
+.eew-note-line.eew-note-c{
+  font-size:12px;
+  font-weight:700;
+  color:#fff;
+  opacity:.9;
 }
 .eew-final-badge{
   display:inline-block;
@@ -519,11 +709,6 @@ button{font-family:inherit;}
   padding:1px 7px;
   margin-left:6px;
 }
-.eew-assumption-note{
-  font-size:12px;
-  color:#fff;
-  padding:0 2px;
-}
 .eew-cancel-banner{
   font-size:12px;
   font-weight:700;
@@ -533,6 +718,7 @@ button{font-family:inherit;}
   border-radius:999px;
   background:#f2f2f2;
   color:#222;
+  text-shadow:none;
 }
 
 /* 震度色 */
@@ -729,16 +915,196 @@ button{font-family:inherit;}
           </label>
           <label class="settings-row">
             <span class="settings-row-label">
-              <span class="settings-row-title">P波・S波到達円</span>
-              <span class="settings-row-desc">JMA走時表(2001年式)に基づき、P波・S波の到達円を地図上に表示します</span>
+              <span class="settings-row-title">新着時の自動タブ切り替え</span>
+              <span class="settings-row-desc">他のタブを見ていても、新着のEEW・地震情報・津波情報が来たら自動的にそのタブへ切り替えます</span>
             </span>
-            <span class="switch"><input type="checkbox" id="setting-ps-circle" checked><span class="switch-track"></span></span>
+            <span class="switch"><input type="checkbox" id="setting-auto-switch-tab" checked><span class="switch-track"></span></span>
           </label>
         </div>
         <div class="settings-section">
           <div class="settings-section-title">このアプリについて</div>
           <div class="settings-info-row"><span>震度・地震情報</span><span class="settings-info-value">P2P地震情報</span></div>
           <div class="settings-info-row"><span>緊急地震速報</span><span class="settings-info-value">WolfX</span></div>
+        </div>
+        <div class="settings-section">
+          <div class="settings-section-title">テスト配信ジェネレータ</div>
+          <div class="gen-type-switch">
+            <button type="button" class="gen-type-btn active" id="gentype-eew-btn" data-gentype="eew">EEW</button>
+            <button type="button" class="gen-type-btn" id="gentype-tsunami-btn" data-gentype="tsunami">津波</button>
+          </div>
+        </div>
+        <div class="settings-section gen-panel" id="gen-panel-eew">
+          <div class="eew-gen-note">ここで作成したEEWは実際の受信データと同じ経路でEEWタブ・地図に反映されます。テスト・デモ用途に使用してください。</div>
+          <form id="eew-gen-form" class="eew-gen-form">
+            <div class="eew-gen-row">
+              <label class="eew-gen-field">
+                <span class="eew-gen-label">EventID</span>
+                <input type="text" id="eewgen-eventid" class="eew-gen-input" placeholder="自動生成">
+              </label>
+              <label class="eew-gen-field">
+                <span class="eew-gen-label">Serial(第何報)</span>
+                <input type="number" id="eewgen-serial" class="eew-gen-input" value="1" min="1">
+              </label>
+            </div>
+            <label class="eew-gen-field">
+              <span class="eew-gen-label">震源地名(Hypocenter)</span>
+              <input type="text" id="eewgen-hypocenter" class="eew-gen-input" value="宮城県沖" placeholder="例: 宮城県沖">
+            </label>
+            <div class="eew-gen-row">
+              <label class="eew-gen-field">
+                <span class="eew-gen-label">緯度(Latitude)</span>
+                <input type="number" id="eewgen-lat" class="eew-gen-input" value="38.2" step="0.01">
+              </label>
+              <label class="eew-gen-field">
+                <span class="eew-gen-label">経度(Longitude)</span>
+                <input type="number" id="eewgen-lng" class="eew-gen-input" value="142.4" step="0.01">
+              </label>
+            </div>
+            <div class="eew-gen-row">
+              <label class="eew-gen-field">
+                <span class="eew-gen-label">マグニチュード(M)</span>
+                <input type="number" id="eewgen-mag" class="eew-gen-input" value="5.5" step="0.1">
+              </label>
+              <label class="eew-gen-field">
+                <span class="eew-gen-label">深さ(km)</span>
+                <input type="number" id="eewgen-depth" class="eew-gen-input" value="30" step="1">
+              </label>
+            </div>
+            <label class="eew-gen-field">
+              <span class="eew-gen-label">推定最大震度(MaxIntensity)</span>
+              <select id="eewgen-maxintensity" class="eew-gen-input">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4" selected>4</option>
+                <option value="5弱">5弱</option>
+                <option value="5強">5強</option>
+                <option value="6弱">6弱</option>
+                <option value="6強">6強</option>
+                <option value="7">7</option>
+              </select>
+            </label>
+            <label class="eew-gen-field">
+              <span class="eew-gen-label">推定最大長周期地震動階級(任意)</span>
+              <select id="eewgen-lpgm" class="eew-gen-input">
+                <option value="" selected>指定しない(非表示)</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+            </label>
+            <label class="eew-gen-check eew-gen-check-wide">
+              <input type="checkbox" id="eewgen-autoshindo" checked>
+              <span>区域ごとの震度を自動計算する(震源からの距離減衰式、深さ0km仮定)</span>
+            </label>
+            <label class="eew-gen-field" id="eewgen-warnarea-field">
+              <span class="eew-gen-label">警報区域(WarnArea、カンマ区切り・自動計算OFF時のみ使用)</span>
+              <input type="text" id="eewgen-warnarea" class="eew-gen-input" placeholder="例: 宮城県,福島県中通り,福島県浜通り">
+            </label>
+            <div class="eew-gen-row">
+              <label class="eew-gen-check">
+                <input type="checkbox" id="eewgen-iswarn" checked>
+                <span>警報(isWarn)</span>
+              </label>
+              <label class="eew-gen-check">
+                <input type="checkbox" id="eewgen-isfinal">
+                <span>最終報(isFinal)</span>
+              </label>
+            </div>
+            <div class="eew-gen-row">
+              <label class="eew-gen-check">
+                <input type="checkbox" id="eewgen-isassumption">
+                <span>仮定震源(isAssumption)</span>
+              </label>
+              <label class="eew-gen-check">
+                <input type="checkbox" id="eewgen-iscancel">
+                <span>取消報(isCancel)</span>
+              </label>
+            </div>
+            <div class="eew-gen-row">
+              <label class="eew-gen-check">
+                <input type="checkbox" id="eewgen-issea">
+                <span>海域震源(isSea)</span>
+              </label>
+            </div>
+            <div class="eew-gen-actions">
+              <button type="submit" id="eewgen-submit" class="eew-gen-btn primary">配信する</button>
+              <button type="button" id="eewgen-random" class="eew-gen-btn">ランダム生成</button>
+            </div>
+          </form>
+        </div>
+        <div class="settings-section gen-panel" id="gen-panel-tsunami" hidden>
+          <div class="eew-gen-note">震源の緯度経度・マグニチュードから、深さ0km仮定の距離減衰式で津波予報区ごとの予想高さを自動算出し、実際の受信データと同じ経路で津波タブ・地図に反映します。テスト・デモ用途に使用してください。</div>
+          <form id="tsunami-gen-form" class="eew-gen-form">
+            <div class="eew-gen-row">
+              <label class="eew-gen-field">
+                <span class="eew-gen-label">緯度(Latitude)</span>
+                <input type="number" id="tsunamigen-lat" class="eew-gen-input" value="38.2" step="0.01">
+              </label>
+              <label class="eew-gen-field">
+                <span class="eew-gen-label">経度(Longitude)</span>
+                <input type="number" id="tsunamigen-lng" class="eew-gen-input" value="142.9" step="0.01">
+              </label>
+            </div>
+            <label class="eew-gen-field">
+              <span class="eew-gen-label">マグニチュード(M)</span>
+              <input type="number" id="tsunamigen-mag" class="eew-gen-input" value="8.0" step="0.1">
+            </label>
+            <label class="eew-gen-check eew-gen-check-wide">
+              <input type="checkbox" id="tsunamigen-autocalc" checked>
+              <span>区域ごとの予想高さ・発表種別を自動計算する(震源からの距離減衰式、深さ0km仮定)</span>
+            </label>
+            <label class="eew-gen-field" id="tsunamigen-grade-field">
+              <span class="eew-gen-label">発表種別(grade、自動計算OFF時のみ使用)</span>
+              <select id="tsunamigen-grade" class="eew-gen-input">
+                <option value="MajorWarning">大津波警報</option>
+                <option value="Warning" selected>津波警報</option>
+                <option value="Watch">津波注意報</option>
+              </select>
+            </label>
+            <label class="eew-gen-field" id="tsunamigen-height-field">
+              <span class="eew-gen-label">予想の高さ(maxHeight、自動計算OFF時のみ使用)</span>
+              <select id="tsunamigen-height" class="eew-gen-input">
+                <option value="10">10m超</option>
+                <option value="10.0">10m</option>
+                <option value="5" selected>5m</option>
+                <option value="3">3m</option>
+                <option value="1">1m</option>
+                <option value="0.2">0.2m(注意報表記)</option>
+              </select>
+            </label>
+            <label class="eew-gen-field eew-gen-check-wide" id="tsunamigen-areas-field">
+              <span class="eew-gen-label">対象区域(複数選択可、自動計算OFF時のみ使用)</span>
+              <select id="tsunamigen-areas" class="eew-gen-input" multiple size="6">
+                <option value="岩手県" selected>岩手県</option>
+                <option value="宮城県" selected>宮城県</option>
+                <option value="福島県">福島県</option>
+                <option value="青森県太平洋沿岸">青森県太平洋沿岸</option>
+                <option value="茨城県">茨城県</option>
+                <option value="千葉県九十九里・外房">千葉県九十九里・外房</option>
+                <option value="伊豆諸島">伊豆諸島</option>
+                <option value="静岡県">静岡県</option>
+                <option value="和歌山県">和歌山県</option>
+                <option value="高知県">高知県</option>
+                <option value="宮崎県">宮崎県</option>
+                <option value="鹿児島県東部">鹿児島県東部</option>
+              </select>
+            </label>
+            <label class="eew-gen-field">
+              <span class="eew-gen-label">到達状況(condition)</span>
+              <select id="tsunamigen-condition" class="eew-gen-input">
+                <option value="">指定しない(時刻のみ表示)</option>
+                <option value="ただちに津波が到達すると予想">ただちに津波が到達すると予想</option>
+                <option value="津波到達中と推測">津波到達中と推測</option>
+                <option value="第1波の到達を確認">第1波の到達を確認</option>
+              </select>
+            </label>
+            <div class="eew-gen-actions">
+              <button type="submit" id="tsunamigen-submit" class="eew-gen-btn primary">配信する</button>
+              <button type="button" id="tsunamigen-clear" class="eew-gen-btn">解除報を配信(全区域解除)</button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
@@ -750,6 +1116,7 @@ button{font-family:inherit;}
 
 <script src="./stations_data.js"></script>
 <script src="./icons_data.js"></script>
+<script src="./traveltime_data.js"></script>
 <script>
 (function(){
 'use strict';
@@ -769,168 +1136,6 @@ const HISTORY_URL = 'https://api.p2pquake.net/v2/history?codes=551&codes=552&lim
 const JMA_QUAKE_URL = 'https://api.p2pquake.net/v2/jma/quake?limit=100';
 const WS_URL = 'https://api.p2pquake.net/v2/ws';
 
-/* ============================================================
-   JMA走時表(2001年式)によるP波・S波到達円
-   ============================================================
-   気象庁が公開している2001年式走時表(トリガ:
-   https://www.data.jma.go.jp/eqev/data/bulletin/catalog/appendix/trtime/trt_j.html)
-   をもとに、震源(緯度・経度・深さ)から任意の震央距離におけるP波/S波の
-   走時(震源からの到達までの秒数)を求め、地図上に到達円として描画する。
-
-   走時表そのもの(tjma2001, 距離2km刻み×深さ0-700km2km刻み)は展開すると
-   数十万行・十数MBに達し埋め込み不可能なため、表示用途に十分な精度を保ちつつ
-   代表的な距離・深さの組だけを間引いたJSON(jma_traveltime_2001.json, 約35KB)を
-   別ファイル化し、fetchで遅延読み込みする。
-*/
-const JMA_TRAVELTIME_URL = 'jma_traveltime_2001.json';
-let jmaTravelTimeTable = null; // {depths:[...], table:{ "深さ(km)": [[距離km, P秒, S秒], ...] }}
-let jmaTravelTimePromise = null;
-
-function loadJmaTravelTimeTable(){
-  if(jmaTravelTimePromise) return jmaTravelTimePromise;
-  jmaTravelTimePromise = fetch(JMA_TRAVELTIME_URL)
-    .then(res => { if(!res.ok) throw new Error('走時表の取得に失敗: ' + res.status); return res.json(); })
-    .then(json => { jmaTravelTimeTable = json; return json; })
-    .catch(err => { console.error('JMA走時表の読み込みに失敗しました', err); jmaTravelTimeTable = null; return null; });
-  return jmaTravelTimePromise;
-}
-
-// 距離方向の線形補間(rowは[距離km, P秒, S秒]の昇順配列)
-function interpDistRow(row, dist){
-  if(dist <= row[0][0]) return [row[0][1], row[0][2]];
-  const last = row[row.length - 1];
-  if(dist >= last[0]) return [last[1], last[2]];
-  for(let i = 0; i < row.length - 1; i++){
-    const a = row[i], b = row[i+1];
-    if(dist >= a[0] && dist <= b[0]){
-      const t = (b[0] === a[0]) ? 0 : (dist - a[0]) / (b[0] - a[0]);
-      return [a[1] + (b[1]-a[1])*t, a[2] + (b[2]-a[2])*t];
-    }
-  }
-  return [last[1], last[2]];
-}
-
-// 震源の深さ(km)・震央距離(km)から、P波・S波の走時(秒, 震源から)を求める。
-// テーブルに無い深さは前後の代表深さから線形補間する。
-function jmaTravelTime(depthKm, distKm){
-  if(!jmaTravelTimeTable) return null;
-  const depths = jmaTravelTimeTable.depths;
-  const table = jmaTravelTimeTable.table;
-  const d = Math.max(depths[0], Math.min(depths[depths.length-1], depthKm ?? 0));
-  let d0 = depths[0], d1 = depths[depths.length-1];
-  for(let i = 0; i < depths.length - 1; i++){
-    if(d >= depths[i] && d <= depths[i+1]){ d0 = depths[i]; d1 = depths[i+1]; break; }
-  }
-  const [tp0, ts0] = interpDistRow(table[String(d0)], distKm);
-  if(d1 === d0) return { tP: tp0, tS: ts0 };
-  const t = (d - d0) / (d1 - d0);
-  const [tp1, ts1] = interpDistRow(table[String(d1)], distKm);
-  return { tP: tp0 + (tp1-tp0)*t, tS: ts0 + (ts1-ts0)*t };
-}
-
-// 走時(秒)から、震源直下の震央から半径何kmまでその波が到達しているかを逆算する。
-// jmaTravelTime()の単調増加性を前提に二分探索する(震央距離0〜2000kmの範囲)。
-function jmaDistanceForTime(depthKm, elapsedSec, phase){
-  if(!jmaTravelTimeTable) return null;
-  let lo = 0, hi = 2000;
-  // 全区間がまだ到達していない場合(震源直下すら到達していない)は円を描かない
-  const t0 = jmaTravelTime(depthKm, 0);
-  if(!t0) return null;
-  const key = phase === 'S' ? 'tS' : 'tP';
-  if(elapsedSec < t0[key]) return null;
-  for(let i = 0; i < 40; i++){
-    const mid = (lo + hi) / 2;
-    const t = jmaTravelTime(depthKm, mid);
-    if(t[key] <= elapsedSec) lo = mid; else hi = mid;
-  }
-  return lo;
-}
-
-// 地球を球体近似(半径6371km)し、中心[lng,lat]から半径radiusKmの円周を
-// 等間隔の角度で64点サンプリングしたGeoJSON Polygon座標配列を返す。
-// (Turf.js等の外部ライブラリに依存せず、球面三角法の公式を直接実装)
-function geoCirclePolygon(lng, lat, radiusKm, steps = 64){
-  const R = 6371; // 地球平均半径(km)
-  const latRad = lat * Math.PI / 180;
-  const lngRad = lng * Math.PI / 180;
-  const angDist = radiusKm / R;
-  const coords = [];
-  for(let i = 0; i <= steps; i++){
-    const bearing = (i / steps) * 2 * Math.PI;
-    const lat2 = Math.asin(
-      Math.sin(latRad) * Math.cos(angDist) +
-      Math.cos(latRad) * Math.sin(angDist) * Math.cos(bearing)
-    );
-    const lng2 = lngRad + Math.atan2(
-      Math.sin(bearing) * Math.sin(angDist) * Math.cos(latRad),
-      Math.cos(angDist) - Math.sin(latRad) * Math.sin(lat2)
-    );
-    coords.push([lng2 * 180 / Math.PI, lat2 * 180 / Math.PI]);
-  }
-  return coords;
-}
-
-// 現在表示中のPS円アニメーションを止めるためのID
-let psCircleAnimHandle = null;
-
-function clearPsCircleOnMap(){
-  if(psCircleAnimHandle){ cancelAnimationFrame(psCircleAnimHandle); psCircleAnimHandle = null; }
-  if(!mapReady) return;
-  const src = map.getSource('ps-circle');
-  if(src) src.setData({type:'FeatureCollection', features:[]});
-}
-
-// EEW(震源latitude/longitude/depth/originTimeMs)に基づき、現在時刻までの経過秒数から
-// P波円・S波円を計算し、地図上に描画する。1秒ごとに再計算して更新し続ける。
-function updatePsCircle(evt){
-  if(!mapReady){ onMapReady(() => updatePsCircle(evt)); return; }
-  if(psCircleAnimHandle){ cancelAnimationFrame(psCircleAnimHandle); psCircleAnimHandle = null; }
-  if(!settings.showPsCircle) return;
-  const valid = evt && isValidLatLng(evt.latitude, evt.longitude);
-  if(!valid){ clearPsCircleOnMap(); return; }
-
-  loadJmaTravelTimeTable().then(() => {
-    if(!jmaTravelTimeTable) return;
-    if(!settings.showPsCircle) return;
-    // 選択中のEEWが変わっていないか確認(非同期読み込み中に切り替わった場合は描画しない)
-    if(state.selectedEEWId !== evt.eventId) return;
-
-    const depth = (typeof evt.depth === 'number') ? evt.depth : 10; // 深さ不明時は暫定的に10kmとみなす
-    const originMs = evt.originTimeMs;
-
-    function tick(){
-      if(!settings.showPsCircle || state.selectedEEWId !== evt.eventId){
-        clearPsCircleOnMap();
-        return;
-      }
-      const elapsedSec = originMs ? (Date.now() - originMs) / 1000 : 0;
-      const features = [];
-      if(elapsedSec >= 0){
-        const rP = jmaDistanceForTime(depth, elapsedSec, 'P');
-        const rS = jmaDistanceForTime(depth, elapsedSec, 'S');
-        if(rP != null && rP > 0){
-          features.push({
-            type:'Feature',
-            properties:{ phase:'P' },
-            geometry:{ type:'Polygon', coordinates:[geoCirclePolygon(evt.longitude, evt.latitude, rP)] }
-          });
-        }
-        if(rS != null && rS > 0){
-          features.push({
-            type:'Feature',
-            properties:{ phase:'S' },
-            geometry:{ type:'Polygon', coordinates:[geoCirclePolygon(evt.longitude, evt.latitude, rS)] }
-          });
-        }
-      }
-      const src = map.getSource('ps-circle');
-      if(src) src.setData({type:'FeatureCollection', features});
-      psCircleAnimHandle = requestAnimationFrame(tick);
-    }
-    tick();
-  });
-}
-
 // WolfX EEW(緊急地震速報) API
 // - WS: 発表のたびに1件のEEWオブジェクトが配信される(複数のEEWが同時発生していても、
 //   API自体は常に単一オブジェクトしか送ってこない。複数を扱うにはこちら側でEventIDごとに
@@ -940,7 +1145,7 @@ function updatePsCircle(evt){
 //   発生時刻(OriginTime)から5分経過したエントリは表示から自動的に取り除く(EEW_TTL_MS)
 const EEW_WS_URL = 'wss://ws-api.wolfx.jp/all_eew';
 const EEW_INITIAL_URL = 'https://api.wolfx.jp/jma_eew.json';
-const EEW_TTL_MS =  5 * 60 * 1000;
+const EEW_TTL_MS = 5 * 60 * 1000;
 
 /* ============================================================
    設定(ユーザー環境設定)
@@ -952,7 +1157,7 @@ const DEFAULT_SETTINGS = {
   eewSound: false,       // EEW受信時に警告音を鳴らす
   browserNotify: false,  // EEW発表時にブラウザ通知を出す
   autoFlyTo: true,        // 新着の地震・EEWの震源へ自動でカメラを移動する
-  showPsCircle: true      // EEW震源にP波・S波到達円を表示する
+  autoSwitchTab: true     // 他のタブを見ていても、新着のEEW/地震情報/津波情報が来たら自動的にそのタブへ切り替える(割り込み表示)
 };
 function loadSettings(){
   try{
@@ -1015,6 +1220,11 @@ function showEEWNotification(evt){
 }
 
 // scale(10刻み) -> 表示用キー・クラス・ラベル
+// 長周期地震動階級(1〜4)と、対応する震度の配色クラスの対応表。
+// 気象庁の目安(階級1≒震度3, 階級2≒震度5弱, 階級3≒震度6弱, 階級4≒震度7)に沿って、
+// EEWカードの長周期地震動階級バッジの文字色を、対応する震度の文字色に揃える。
+const LPGM_CLASS_TO_SCALE_CLS = { 1:'s3', 2:'s5w', 3:'s6w', 4:'s7' };
+
 function scaleInfo(scale){
   if(scale == null) return {key:'-', cls:'', label:'-'};
   if(scale >= 70) return {key:'7',  cls:'s7',  label:'7'};
@@ -1158,12 +1368,56 @@ const AREA_CODE_BY_NAME = {};
   }
 })();
 
+// WolfXのWarnArea[].Chiiki は「宮城県」「福島県中通り」のような気象庁予報区名で、
+// JMAの細分区域(stations_data.jsのan、例:「宮城県北部」)とは表記の粒度がずれることがある。
+// 完全一致がなければ、前方一致(短い方が長い方の先頭に一致)で拾えるだけ拾う。
+// 1つのChiiki名に複数の細分区域がぶら下がっている場合(例:「宮城県」に対し「宮城県北部」
+// 「宮城県南部」の両方)は該当する区域すべてを塗る。
+const ALL_AREA_NAMES = Object.keys(AREA_CODE_BY_NAME);
+function findAreaCodesForChiiki(chiiki){
+  if(!chiiki) return [];
+  const name = String(chiiki).replace(/\u3000/g, ' ').trim();
+  if(!name) return [];
+  const exact = AREA_CODE_BY_NAME[name];
+  if(exact) return [exact];
+  const codes = [];
+  for(const areaName of ALL_AREA_NAMES){
+    const shorter = name.length <= areaName.length ? name : areaName;
+    const longer  = name.length <= areaName.length ? areaName : name;
+    if(shorter.length >= 2 && longer.startsWith(shorter)){
+      codes.push(AREA_CODE_BY_NAME[areaName]);
+    }
+  }
+  return codes;
+}
+
 // 観測点名 -> 観測点情報 の逆引き(p2pquakeのpoints[].addrは観測点名で来るケースに対応)
 const STATION_BY_NAME = {};
 (function buildStationNameIndex(){
   for(const id in STATIONS){
     const st = STATIONS[id];
     STATION_BY_NAME[st.n] = st;
+  }
+})();
+
+// 区域コード -> 代表座標(所属観測点群の緯度経度の平均) の索引。
+// EEWジェネレータの震度自動計算(震源からの距離減衰)で、各細分区域までの距離を
+// 求めるために使う。stations_data.jsには区域そのものの座標は無いため、
+// その区域に属する観測点の座標を平均して代表点とする簡易的な近似。
+const AREA_CENTER_BY_CODE = {};
+(function buildAreaCenterIndex(){
+  const sums = {}; // code -> {latSum, lngSum, count}
+  for(const id in STATIONS){
+    const st = STATIONS[id];
+    if(!st.ac || typeof st.la !== 'number' || typeof st.lo !== 'number') continue;
+    if(!sums[st.ac]) sums[st.ac] = { latSum:0, lngSum:0, count:0 };
+    sums[st.ac].latSum += st.la;
+    sums[st.ac].lngSum += st.lo;
+    sums[st.ac].count += 1;
+  }
+  for(const code in sums){
+    const s = sums[code];
+    AREA_CENTER_BY_CODE[code] = { lat: s.latSum / s.count, lng: s.lngSum / s.count };
   }
 })();
 
@@ -1264,6 +1518,14 @@ function renderScaleOnMap(event){
     }
   }
 
+  // --- PS円(P波・S波到達円)はEEW(緊急地震速報)専用の演出とする ---
+  // 地震情報タブは「すでに発生した地震の確定情報」を見るためのタブであり、
+  // 過去の地震(数分前〜数日前)を選択してもPS円を出さない。
+  // (以前はここでも震源確定+発生時刻があれば起動していたが、既に発生から
+  //  長時間経過した地震でも経過秒数だけで円が計算され、地球を何周分も伸びた
+  //  円が描かれてしまう不具合があったため、地震情報タブでは常に非表示にする)
+  stopPSCircleAnimation();
+
   // --- カメラ移動 ---
   // 震源・観測点・塗られた細分区域(震度速報)のすべてが視野に入るようboundsを統合する。
   // 震度速報(震源不明)の場合は hasArea のみで cameraBounds が構築され、
@@ -1293,6 +1555,287 @@ function clearScaleOnMap(){
   if(stSrc) stSrc.setData({type:'FeatureCollection', features:[]});
   const hypSrc = map.getSource('hypocenter');
   if(hypSrc) hypSrc.setData({type:'FeatureCollection', features:[]});
+  clearEEWWarnAreaOnMap();
+  stopPSCircleAnimation();
+}
+
+// 津波イベントの震源アイコンを地図に表示する(水色フチの×印、地震情報・EEWと共通のhypocenterソースを使う)。
+// 実際のp2pquake配信には震源座標が含まれないため、latitude/longitudeが無いイベント(実データ由来)では
+// 何も表示しない。津波ジェネレータ(M値ベース自動計算)で指定した震源のみが対象。
+// 津波タブを見ている時だけ表示し、他のタブ(地震情報・EEW)を見ている最中に地図上の震源表示を
+// 勝手に上書きしないようにする(showEEWOnMap・renderScaleOnMapと同様の設計)。
+function renderTsunamiHypocenterOnMap(evt){
+  if(!mapReady){ onMapReady(() => renderTsunamiHypocenterOnMap(evt)); return; }
+  if(state.activeTab !== 'tsunami') return;
+  const hypSrc = map.getSource('hypocenter');
+  if(!hypSrc) return;
+  const valid = evt && isValidLatLng(evt.latitude, evt.longitude);
+  hypSrc.setData({
+    type:'FeatureCollection',
+    features: valid ? [{ type:'Feature', geometry:{type:'Point', coordinates:[evt.longitude, evt.latitude]}, properties:{kind:'tsunami'} }] : []
+  });
+  if(valid && settings.autoFlyTo){
+    map.flyTo({ center:[evt.longitude, evt.latitude], zoom: Math.max(map.getZoom(), 5.5), duration:800 });
+  }
+}
+
+// EEWのWarnArea(区域ごとの推定震度)を、確定震度と同じ細分区域ポリゴン(eq_saibun.geojson)を
+// 使って塗り分ける。Chiiki名から該当する細分区域コードを引き、区域ごとの最大推定震度で
+// 色付けする(1つのChiikiに複数の細分区域が対応する場合は同じ色になる)。
+// 現在有効な(TTL内・取消されていない)全EEWのWarnArea(区域ごとの推定震度)を合算し、
+// 区域ごとの最大震度で塗り分ける。
+// 「1件だけ選んで表示」ではなく「今起きている全EEWをまとめて俯瞰する」ための表示のため、
+// 選択中のEEW(state.selectedEEWId)に関わらず、state.eewEvents(有効な全件)を対象にする。
+// 複数のEEWが同時に発表されている場合、区域ごとに最も大きい推定震度を採用する。
+function renderAllEEWWarnAreaOnMap(){
+  if(!mapReady){ onMapReady(renderAllEEWWarnAreaOnMap); return; }
+  const src = map.getSource('eew-warnarea-scale');
+  if(!src || !window.__saibunFeatures) return;
+
+  const areaMaxScale = {};
+  for(const evt of state.eewEvents.values()){
+    if(evt.isCancel) continue;
+    for(const a of (evt.warnArea || [])){
+      const chiiki = a.Chiiki || a.name;
+      const shindoLabel = a.Shindo != null ? a.Shindo : a.shindo;
+      const scale = jmaIntensityToScale(shindoLabel);
+      if(scale == null) continue;
+      for(const code of findAreaCodesForChiiki(chiiki)){
+        if(areaMaxScale[code] == null || scale > areaMaxScale[code]) areaMaxScale[code] = scale;
+      }
+    }
+  }
+  if(Object.keys(areaMaxScale).length === 0){
+    src.setData({type:'FeatureCollection', features:[]});
+    return;
+  }
+  const features = window.__saibunFeatures
+    .filter(f => areaMaxScale[f.properties.code] != null)
+    .map(f => ({
+      ...f,
+      properties: { ...f.properties, color: nearestScaleColor(areaMaxScale[f.properties.code]) }
+    }));
+  src.setData({type:'FeatureCollection', features});
+}
+
+function clearEEWWarnAreaOnMap(){
+  if(!mapReady) return;
+  const src = map.getSource('eew-warnarea-scale');
+  if(src) src.setData({type:'FeatureCollection', features:[]});
+}
+
+/* ============================================================
+   PS円(P波・S波到達円のアニメーション表示)
+   ============================================================ */
+// JMA 2001年式走時表(traveltime_data.js の JMA_TRAVELTIME)を用いて、
+// 「発生時刻からの経過秒数」から「P波面・S波面が到達している震央距離(km)」を求め、
+// 震源を中心とした円(概算の測地円)としてGeoJSONポリゴンを生成し、地図上にアニメーション表示する。
+//
+// 走時表は table[depth(文字列)] = [[distance_km, p_time_s, s_time_s], ...] という形式で、
+// 距離方向は間引かれた代表点(0,5,10,...,2000km)のみを持つ近似テーブル。
+// 深さは最も近い代表深さ(depths配列)にスナップし、距離方向は前後の代表点から線形補間する。
+// 逆に「経過時間 -> 到達距離」を求める際も、時間の並びが距離に対して単調増加であることを
+// 利用して同様に線形補間する。
+
+// 与えられた深さ(km)に最も近い、走時表が持つ代表深さのキー(文字列)を返す。
+function nearestTraveltimeDepthKey(depthKm){
+  if(typeof JMA_TRAVELTIME === 'undefined' || !JMA_TRAVELTIME.depths) return null;
+  const depths = JMA_TRAVELTIME.depths;
+  let best = depths[0];
+  let bestDiff = Math.abs(depthKm - best);
+  for(const d of depths){
+    const diff = Math.abs(depthKm - d);
+    if(diff < bestDiff){ best = d; bestDiff = diff; }
+  }
+  return String(best);
+}
+
+// 走時表の1深さ分のテーブル(distance, p_time, s_time の配列)から、
+// 経過時間 elapsedSec に対応する震央距離(km)を線形補間で求める。
+// waveIndex: 1ならP波(p_time列)、2ならS波(s_time列)。
+// elapsedSecがテーブルの最大距離(2000km相当)を超えた場合は、表の最後の区間
+// (1900km->2000km)から求まる実測平均速度(km/s)でそのまま等速延長した距離を返す。
+// これにより「表の外に出た瞬間に円の更新が止まり、巨大なまま固まって見える」詰まりを
+// 解消し、常に一定速度で滑らかに広がり続けるようにする。
+function distanceForElapsedTime(rows, elapsedSec, waveIndex){
+  if(!rows || rows.length === 0) return null;
+  if(elapsedSec < rows[0][waveIndex]) return null; // 震源直下にもまだ到達していない(通常elapsedSec>=0で起きない)
+  for(let i = 0; i < rows.length - 1; i++){
+    const t0 = rows[i][waveIndex];
+    const t1 = rows[i+1][waveIndex];
+    if(elapsedSec >= t0 && elapsedSec <= t1){
+      if(t1 === t0) return rows[i][0];
+      const ratio = (elapsedSec - t0) / (t1 - t0);
+      return rows[i][0] + ratio * (rows[i+1][0] - rows[i][0]);
+    }
+  }
+  // --- 表の最大距離を超えた場合の一定速度延長 ---
+  // 表の最後の区間の実測値からP波/S波それぞれの速度(km/s)を算出し、
+  // (例: 秒速3.8km決定・10s経過なら+38km、秒速6km決定・20s経過なら+120km、という具合に)
+  // その速度のまま等速で距離を伸ばし続ける。深さごとの走時表を基準にした速度なので、
+  // 震源の深さによる伝播速度の違いも自然に反映される。
+  const last = rows[rows.length - 1];
+  const prev = rows[rows.length - 2];
+  if(!last || !prev) return last ? last[0] : null;
+  const dt = last[waveIndex] - prev[waveIndex];
+  const dd = last[0] - prev[0];
+  if(dt <= 0 || dd <= 0) return last[0]; // 速度が求まらない異常データの場合は表の最大距離で足踏みさせる
+  const speedKmPerSec = dd / dt;
+  const elapsedBeyond = elapsedSec - last[waveIndex];
+  return last[0] + speedKmPerSec * elapsedBeyond;
+}
+
+// 震源(lat,lng,depth)と経過秒数から、P波面・S波面それぞれの到達震央距離(km)を返す。
+// 表の最大距離を超えた後も一定速度で延長されるため、震源直下にすら到達していない
+// (通常起きない)場合を除き、基本的にnullにはならない。
+function calcPSDistances(depthKm, elapsedSec){
+  if(typeof JMA_TRAVELTIME === 'undefined') return {pDistanceKm:null, sDistanceKm:null};
+  const key = nearestTraveltimeDepthKey(Math.max(0, depthKm || 0));
+  const rows = key != null ? JMA_TRAVELTIME.table[key] : null;
+  if(!rows) return {pDistanceKm:null, sDistanceKm:null};
+  return {
+    pDistanceKm: distanceForElapsedTime(rows, elapsedSec, 1),
+    sDistanceKm: distanceForElapsedTime(rows, elapsedSec, 2)
+  };
+}
+
+// 中心(lat,lng)から半径radiusKmの円を、地球球体近似(測地線)でGeoJSON Polygonとして生成する。
+// stepsが多いほど滑らかになるが、円が小さいうちは48分割で十分な一方、
+// 半径が大きくなるほど1辺あたりの画面上の長さが伸びてカクカクして見えてしまう。
+// そのため半径に応じてstepsを段階的に増やし、大きな円ほど多角形の分割数を増やして滑らかにする。
+// (円が大きい=1辺のピクセル長が伸びやすい状況ほど、より多くの頂点で角を目立たなくする)
+const EARTH_RADIUS_KM = 6371.0088;
+function stepsForRadiusKm(radiusKm){
+  if(radiusKm == null) return 48;
+  if(radiusKm < 300) return 48;
+  if(radiusKm < 800) return 72;
+  if(radiusKm < 2000) return 96;
+  if(radiusKm < 6000) return 128;
+  return 160;
+}
+function geodesicCirclePolygon(centerLat, centerLng, radiusKm, steps){
+  steps = steps || stepsForRadiusKm(radiusKm);
+  const coords = [];
+  const latRad = centerLat * Math.PI / 180;
+  const lngRad = centerLng * Math.PI / 180;
+  const angDist = radiusKm / EARTH_RADIUS_KM;
+  for(let i = 0; i <= steps; i++){
+    const bearing = (i / steps) * 2 * Math.PI;
+    const lat2 = Math.asin(
+      Math.sin(latRad) * Math.cos(angDist) +
+      Math.cos(latRad) * Math.sin(angDist) * Math.cos(bearing)
+    );
+    const lng2 = lngRad + Math.atan2(
+      Math.sin(bearing) * Math.sin(angDist) * Math.cos(latRad),
+      Math.cos(angDist) - Math.sin(latRad) * Math.sin(lat2)
+    );
+    coords.push([lng2 * 180 / Math.PI, lat2 * 180 / Math.PI]);
+  }
+  return {
+    type:'Feature',
+    geometry:{ type:'Polygon', coordinates:[coords] },
+    properties:{}
+  };
+}
+
+// --- アニメーション状態管理 ---
+// requestAnimationFrame(毎フレーム=最大60回/秒)で毎回GeoJSONを作り直してsetDataすると、
+// ブラウザのタブスロットリングやメインスレッドの混雑状況次第でフレーム間隔が不安定になり、
+// 「速くなったり遅くなったりする」体感のガクツキにつながっていた。
+// PS円は見た目上そこまで高いフレームレートを必要としないため、setIntervalによる
+// 固定間隔(PS_ANIM_INTERVAL_MS)更新に切り替え、フレームレート変動の影響を受けないようにする。
+const PS_ANIM_INTERVAL_MS = 200; // 1秒間に5回更新(見た目には十分滑らか)
+const psAnim = {
+  timerId: null,
+  hypocenter: null, // {lat, lng, depthKm, originTimeMs}
+  lastPDistanceKm: null, // 直前に描画したP波円の半径(km)。変化がなければsetDataを省略する
+  lastSDistanceKm: null,
+};
+
+function stopPSCircleAnimation(){
+  if(psAnim.timerId != null){
+    clearInterval(psAnim.timerId);
+    psAnim.timerId = null;
+  }
+  psAnim.hypocenter = null;
+  psAnim.lastPDistanceKm = null;
+  psAnim.lastSDistanceKm = null;
+  if(mapReady){
+    const pSrc = map.getSource('ps-circle-p');
+    const sSrc = map.getSource('ps-circle-s');
+    if(pSrc) pSrc.setData({type:'FeatureCollection', features:[]});
+    if(sSrc) sSrc.setData({type:'FeatureCollection', features:[]});
+  }
+}
+
+// 半径がほぼ変わっていない(0.5km未満の差)場合は、GeoJSON再構築・setDataそのものを省略する。
+// 更新間隔(PS_ANIM_INTERVAL_MS)自体が粗いため誤差は無視できるレベルで、
+// 無駄な再描画を減らして負荷とガクツキをさらに抑える。
+function almostEqual(a, b){
+  if(a == null || b == null) return a === b;
+  return Math.abs(a - b) < 0.5;
+}
+
+function psCircleAnimationTick(){
+  if(!psAnim.hypocenter){ stopPSCircleAnimation(); return; }
+  const { lat, lng, depthKm, originTimeMs } = psAnim.hypocenter;
+  const elapsedSec = (Date.now() - originTimeMs) / 1000;
+
+  const pSrc = map.getSource('ps-circle-p');
+  const sSrc = map.getSource('ps-circle-s');
+
+  if(elapsedSec < 0){
+    // 発生時刻前(クロックのずれ等)は円を出さない
+    if(pSrc) pSrc.setData({type:'FeatureCollection', features:[]});
+    if(sSrc) sSrc.setData({type:'FeatureCollection', features:[]});
+    psAnim.lastPDistanceKm = null;
+    psAnim.lastSDistanceKm = null;
+    return;
+  }
+
+  const { pDistanceKm, sDistanceKm } = calcPSDistances(depthKm, elapsedSec);
+
+  if(pSrc && !almostEqual(pDistanceKm, psAnim.lastPDistanceKm)){
+    pSrc.setData({
+      type:'FeatureCollection',
+      features: pDistanceKm != null ? [geodesicCirclePolygon(lat, lng, pDistanceKm)] : []
+    });
+    psAnim.lastPDistanceKm = pDistanceKm;
+  }
+  if(sSrc && !almostEqual(sDistanceKm, psAnim.lastSDistanceKm)){
+    sSrc.setData({
+      type:'FeatureCollection',
+      features: sDistanceKm != null ? [geodesicCirclePolygon(lat, lng, sDistanceKm)] : []
+    });
+    psAnim.lastSDistanceKm = sDistanceKm;
+  }
+
+  // S波円が地球上どこからでも到達しうる距離(半周=約20000km)を十分に超えたら、
+  // 地図上ではもう意味を持たない(画面外を延々と広がり続けるだけ)ため自動停止する。
+  // (表の範囲を超えても一定速度で距離を返すようになったため、以前のような
+  //  「pDistanceKm/sDistanceKmがnullになったら止める」判定はもう使えない)
+  const PS_ANIM_AUTO_STOP_DISTANCE_KM = 20040; // 地球半周(π*EARTH_RADIUS_KM)に余裕を持たせた値
+  if(sDistanceKm != null && sDistanceKm > PS_ANIM_AUTO_STOP_DISTANCE_KM){
+    stopPSCircleAnimation();
+  }
+}
+
+// 選択中の地震(震源確定済み・有効な緯度経度)についてPS円アニメーションを開始する。
+// 既に別の震源でアニメーション中なら、そちらを止めて新しい震源に切り替える。
+// EEW専用の演出のため、発生時刻から一定時間(PS_ANIM_MAX_AGE_MS)以上経過している場合は
+// そもそも起動しない(何らかの理由で古いEEWデータが渡された場合の保険)。
+const PS_ANIM_MAX_AGE_MS = 10 * 60 * 1000; // 10分
+function startPSCircleAnimation(lat, lng, depthKm, originTimeIsoLike){
+  if(!mapReady){ onMapReady(() => startPSCircleAnimation(lat, lng, depthKm, originTimeIsoLike)); return; }
+  const originTimeMs = parseJstTimeToEpochMs(originTimeIsoLike);
+  if(originTimeMs == null) { stopPSCircleAnimation(); return; }
+  if(Date.now() - originTimeMs > PS_ANIM_MAX_AGE_MS){ stopPSCircleAnimation(); return; }
+  if(psAnim.timerId != null) clearInterval(psAnim.timerId);
+  psAnim.hypocenter = { lat, lng, depthKm: depthKm || 0, originTimeMs };
+  psAnim.lastPDistanceKm = null;
+  psAnim.lastSDistanceKm = null;
+  psCircleAnimationTick(); // 開始直後の見た目の遅延を防ぐため即座に1回描画する
+  psAnim.timerId = setInterval(psCircleAnimationTick, PS_ANIM_INTERVAL_MS);
 }
 
 // 津波の発表区域レイヤー(色付き塗り分け)を地図から消す。
@@ -1313,23 +1856,22 @@ function syncMapOverlayToTab(){
   if(!mapReady){ onMapReady(syncMapOverlayToTab); return; }
   if(state.activeTab === 'earthquake'){
     clearTsunamiOnMap();
-    clearPsCircleOnMap();
     const evt = state.events.find(e => e.id === state.selectedId);
     if(evt && evt.type === 'earthquake') renderScaleOnMap(evt.raw); else clearScaleOnMap();
   } else if(state.activeTab === 'eew'){
     clearScaleOnMap();
     clearTsunamiOnMap();
     const evt = state.eewEvents.get(state.selectedEEWId);
-    if(evt) showEEWOnMap(evt); else clearPsCircleOnMap();
+    if(evt) showEEWOnMap(evt);
   } else if(state.activeTab === 'tsunami'){
     clearScaleOnMap();
-    clearPsCircleOnMap();
     updateTsunamiLayer();
+    const latestTsunamiEvt = state.events.find(e => e.type === 'tsunami');
+    renderTsunamiHypocenterOnMap(latestTsunamiEvt || null);
   } else {
     // 設定タブ: 地図そのものは表示したまま、情報だけ全て消す
     clearScaleOnMap();
     clearTsunamiOnMap();
-    clearPsCircleOnMap();
   }
 }
 
@@ -1415,6 +1957,10 @@ function normalizeEvent(raw){
       place: worst ? worst.name : '津波予報',
       grade: worst ? worst.grade : null,
       areas,
+      // 実際のp2pquake配信には震源座標は含まれないが、津波ジェネレータ(M値ベース自動計算)は
+      // 震源緯度経度を指定して区域を計算するため、その座標があれば地図に震源アイコンを出すために保持する。
+      latitude: typeof raw.latitude === 'number' ? raw.latitude : null,
+      longitude: typeof raw.longitude === 'number' ? raw.longitude : null,
       raw
     };
   }
@@ -1672,6 +2218,16 @@ function jmaIntensityToScale(label){
   return map[s] != null ? map[s] : null;
 }
 
+// 震源地名(Hypocenter文字列)から海域震源かどうかを簡易判定する。
+// 「三陸沖」「宮城県沖」のような「〜沖」表記や、「相模湾」「駿河湾」のような「〜湾」、
+// その他「海」を含む地名(例:日本海)を海域震源とみなす簡易ヒューリスティック。
+// リアルタイム受信データ(WolfX)には海域/内陸を直接示すフラグが無いため、
+// テスト配信フォームで明示指定が無い場合のフォールバックとして使う。
+function guessIsSeaHypocenter(name){
+  if(!name) return false;
+  return /(沖|湾|海)/.test(String(name));
+}
+
 // WolfXのレスポンスを表示用に正規化する。
 // 実際のフィールド名はWolfXのAPI仕様に準拠(Title/CodeType/EventID/Serial/Hypocenter/
 // Latitude/Longitude/Magunitude(原文ママ)/Depth/MaxIntensity/WarnArea/isWarn/isFinal/isCancel等)。
@@ -1688,11 +2244,19 @@ function normalizeEEW(raw){
     magnitude: (typeof raw.Magunitude === 'number') ? raw.Magunitude : (typeof raw.Magnitude === 'number' ? raw.Magnitude : null),
     depth: (typeof raw.Depth === 'number') ? raw.Depth : null,
     maxIntensity: raw.MaxIntensity || '不明',
+    // 推定最大長周期地震動階級(1〜4)。実際の配信ソース(WolfX)には現状無いフィールドだが、
+    // テスト配信ジェネレータから数値で渡された場合や、将来対応ソースが増えた場合のために
+    // raw.LgIntensity(数値)を読み取る。無ければnull(=非表示)。
+    lpgmClass: (typeof raw.LgIntensity === 'number') ? raw.LgIntensity : null,
     isWarn: raw.isWarn === true,       // true: 警報(強い揺れが予想される区域あり) / false: 予報
     isFinal: raw.isFinal === true,     // 最終報
     isCancel: raw.isCancel === true,   // 取消
     isAssumption: raw.isAssumption === true, // 仮定震源(震源要素の推定が完了していない)
     isTraining: raw.isTraining === true,     // 訓練報
+    // 海域震源かどうか。WolfXの実データには海域/内陸を直接示すフラグが無いため、
+    // raw.isSea が明示的に指定されていればそれを優先し(テスト配信フォーム等)、
+    // 無ければ震源地名(Hypocenter)に「沖」「海」等が含まれるかで簡易判定する。
+    isSea: (raw.isSea === true || raw.isSea === false) ? raw.isSea : guessIsSeaHypocenter(raw.Hypocenter),
     warnArea: Array.isArray(raw.WarnArea) ? raw.WarnArea : [],
     latitude: (typeof raw.Latitude === 'number') ? raw.Latitude : null,
     longitude: (typeof raw.Longitude === 'number') ? raw.Longitude : null,
@@ -1717,12 +2281,14 @@ function pruneExpiredEEW(){
       if(state.selectedEEWId === id){
         state.selectedEEWId = null;
         clearScaleOnMap();
-        clearPsCircleOnMap();
       }
     }
   }
   if(changed){
     if(state.activeTab === 'eew') renderList();
+    // 失効したEEWがWarnAreaの塗り分けに寄与していた可能性があるため、
+    // 表示中(EEW/地震情報タブ)なら合算震度を再計算して塗り直す。
+    if(state.activeTab === 'eew' || state.activeTab === 'earthquake') renderAllEEWWarnAreaOnMap();
   }
 }
 setInterval(pruneExpiredEEW, 10000); // 10秒ごとに失効チェック
@@ -1750,6 +2316,7 @@ function upsertEEW(raw){
     }
     if(evt.hypocenter === '不明' && existing.hypocenter !== '不明') evt.hypocenter = existing.hypocenter;
     if(evt.maxIntensity === '不明' && existing.maxIntensity !== '不明') evt.maxIntensity = existing.maxIntensity;
+    if(evt.lpgmClass == null) evt.lpgmClass = existing.lpgmClass;
     if(evt.magnitude == null) evt.magnitude = existing.magnitude;
     if(evt.depth == null) evt.depth = existing.depth;
     if(evt.latitude == null) evt.latitude = existing.latitude;
@@ -1757,15 +2324,24 @@ function upsertEEW(raw){
     if(evt.originTimeMs == null) evt.originTimeMs = existing.originTimeMs;
   }
 
+  // EEWは緊急性が高いため、新規・続報を受信したら地震情報・津波タブを見ている
+  // 最中でも強制的にEEWタブへ切り替えて地図も更新する(割り込み表示)。
+  // 取消報(isCancel)は「危険が去った」知らせであり緊急に見せる必要性は低いため、
+  // タブの割り込みは行わない(表示中なら塗り分けの再計算のみ行う)。
+  // 設定でこの自動切り替えをOFFにしている場合は、現在のタブ表示を優先する。
+  const shouldInterrupt = settings.autoSwitchTab && state.activeTab !== 'eew';
+
   if(evt.isCancel){
     state.eewEvents.delete(evt.eventId); // 取消報は即座に消す
     if(state.selectedEEWId === evt.eventId){
       state.selectedEEWId = null;
       clearScaleOnMap();
-      clearPsCircleOnMap();
     }
+    // 取消によってWarnArea合算の内容が変わるため、表示中なら塗り直す。
+    if(state.activeTab === 'eew' || state.activeTab === 'earthquake') renderAllEEWWarnAreaOnMap();
   } else {
     state.eewEvents.set(evt.eventId, evt);
+    if(shouldInterrupt) setActiveTab('eew');
     // 新規のEEW、または現在地図に表示中のEEWの続報であれば、地図上の震源表示を自動更新する。
     // (EEWは緊急性が高いため、EEWタブはもちろん地震情報タブを見ている最中でも割り込んで表示する。
     //  ただし津波タブ・設定タブを見ている最中は、そちらの表示を優先し地図を奪わない)
@@ -1773,6 +2349,10 @@ function upsertEEW(raw){
     if((!existing || state.selectedEEWId === evt.eventId)){
       state.selectedEEWId = evt.eventId;
       if(canShowOnMap) showEEWOnMap(evt);
+    } else if(canShowOnMap){
+      // 選択中でない(=他のEEWを見ている)場合でも、震源アイコン以外の合算震度塗り分けは
+      // 新しく届いたこのEEWの分も反映されるべきなので再計算だけ行う。
+      renderAllEEWWarnAreaOnMap();
     }
     // 受信音・ブラウザ通知は「新規のEEW(このEventIDを初めて受信した時)」のみ発火する。
     // 続報のたびに毎回鳴ると煩わしいため対象外。
@@ -1795,13 +2375,7 @@ function eewDepthLabel(depth){
   return depth + 'km';
 }
 
-// 推定最大長周期地震動階級はWolfX側から数値キーとして配信されていないため、
-// 震度からの近似では出さない(震度3の地震で必ず階級1が出てしまう等、不正確な表示になるため)。
-// 複数ソースに対応した際、生データに階級の数値(例: raw.LgIntensity等)が来るソースが
-// 増えたら、ここでその値を読み取って返すようにする。現状は常にnullを返し、行自体を非表示にする。
-function eewLpgmClassFromScale(scale){
-  return null;
-}
+
 
 function renderEEWCard(evt){
   const card = document.createElement('div');
@@ -1823,31 +2397,61 @@ function renderEEWCard(evt){
     </div>
   `;
 
-  // 長周期地震動階級パネル(数値キーが実際に来た場合のみ表示。現状のWolfXソースでは常に非表示)
-  const lpgmClass = eewLpgmClassFromScale(scale);
+  // 長周期地震動階級パネル(ジェネレータでの指定、または対応ソースから数値が来た場合のみ表示)
+  // 階級ごとに対応する震度の配色(3→s3, 5弱→s5w, 6弱→s6w, 7→s7)を使い、
+  // 「震度の文字色に合わせる」形にする(震度バッジ自体の色とは独立)。
+  const lpgmClass = evt.lpgmClass;
+  const lpgmCls = LPGM_CLASS_TO_SCALE_CLS[lpgmClass] || '';
   const lpgmRowHtml = lpgmClass != null ? `
-    <div class="eew-lpgm-row ${sInfo.cls}">
+    <div class="eew-lpgm-row ${lpgmCls}">
       <div class="eew-lpgm-label">推定最大長周期地震動階級</div>
-      <div class="eew-lpgm-badge">${lpgmClass}</div>
+      <div class="eew-lpgm-badge">階級${lpgmClass}</div>
     </div>
   ` : '';
 
   const finalBadge = evt.isFinal ? '<span class="eew-final-badge">最終報</span>' : '';
-  const assumptionNote = evt.isAssumption ? '<div class="eew-assumption-note">震源:推定中(仮定震源)</div>' : '';
 
-  const warnAreaHtml = evt.warnArea.length > 0 ? `
-    <div class="eew-assumption-note">警報区域:${evt.warnArea.map(a => a.Chiiki || a.name || '').filter(Boolean).join('、')}</div>
-  ` : '';
+  // 警報区域(WarnArea)は地図上のポリゴン塗り分け(renderEEWWarnAreaOnMap)のみで表現し、
+  // サイドバーのカードにはテキスト列挙しない(区域数が多いと冗長になるため)。
 
-  // 特別警報(震度6弱以上を含む警報)相当かどうかで警戒文言を切り替える。
-  // WolfXからは特別警報かどうかのフラグが直接来ないため、警報かつ最大予想震度が
-  // 6弱(55)以上の場合に「緊急地震速報の特別警報です。」の文言を用いる(画像の表示例に合わせる)。
+  // --- EEWの付加文(a:独立文/b:先頭に付ける文/c:文の後ろに付ける文) ---
+  //
+  // a: 警報/予報/特別警報の別による独立した定型文。
+  //    特別警報(震度6弱以上を含む警報)相当かどうかで文言を切り替える。WolfXからは
+  //    特別警報かどうかのフラグが直接来ないため、警報かつ最大予想震度が6弱(55)以上の
+  //    場合に特別警報の文言を用いる。
   const isSpecialWarn = evt.isWarn && scale != null && scale >= 55;
-  const warnText = evt.isWarn
+  const textA = evt.isWarn
     ? (isSpecialWarn
-        ? '緊急地震速報の特別警報です。<br>猛烈な揺れに警戒してください。'
-        : '強い揺れに警戒してください。')
-    : '';
+        ? '緊急地震速報の特別警報です。<br>身の安全を確保してください。'
+        : '緊急地震速報です。<br>強い揺れに警戒してください。')
+    : '緊急地震速報（予報）です。<br>揺れに注意してください。';
+
+  // b: 仮定震源(isAssumption)の場合のみ先頭に付ける、PLUM法/レベル法の別を示す文。
+  //    見分け方: 震度5弱固定 かつ 予報(isWarn===false) → レベル法、それ以外の仮定震源 → PLUM法。
+  //    (レベル法は震度5弱固定・予報区分での発表、PLUM法は震度が変動し警報の場合もある)
+  let textB = '';
+  if(evt.isAssumption){
+    const isLevelMethod = (scale === 45) && !evt.isWarn; // 震度5弱固定 & 予報
+    textB = isLevelMethod
+      ? 'レベル法による仮定震源要素です。'
+      : 'PLUM法による仮定震源要素です。';
+  }
+
+  // c: 海域地震かつM6.2以上かつ深さ60km以浅の推定の場合のみ、文の後ろに付ける津波注意文。
+  //    海域震源かどうか(isSea)はテスト配信フォームでの明示指定を優先し、無ければ
+  //    震源地名からの簡易判定(guessIsSeaHypocenter)を使う(normalizeEEWで算出済み)。
+  //    仮定震源(isAssumption)はM・深さが未確定のため対象外とする。
+  const isTsunamiCaution = !evt.isAssumption && evt.isSea === true
+    && evt.magnitude != null && evt.magnitude >= 6.2
+    && evt.depth != null && evt.depth <= 60;
+  const textC = isTsunamiCaution ? '念のため津波にも注意してください。' : '';
+
+  const eewMessageHtml = `
+    ${textB ? `<div class="eew-note-line eew-note-b">${textB}</div>` : ''}
+    <div class="eew-note-line eew-note-a">${textA}</div>
+    ${textC ? `<div class="eew-note-line eew-note-c">${textC}</div>` : ''}
+  `;
 
   card.innerHTML = `
     <div class="eew-card-head">
@@ -1859,13 +2463,13 @@ function renderEEWCard(evt){
     <div class="eew-card-body">
       ${intensityRowHtml}
       ${lpgmRowHtml}
+      ${evt.isAssumption ? '' : `
       <div class="eew-stats-row">
         <div class="eew-stat" style="border-color:${magColor(evt.magnitude)};">${eewMagLabel(evt.magnitude)}</div>
         <div class="eew-stat" style="border-color:${depthColor(evt.depth)};">${eewDepthLabel(evt.depth)}</div>
       </div>
-      ${warnText ? `<div class="eew-warn-text">${warnText}</div>` : ''}
-      ${assumptionNote}
-      ${warnAreaHtml}
+      `}
+      ${eewMessageHtml}
     </div>
   `;
   card.style.cursor = 'pointer';
@@ -1901,24 +2505,30 @@ function renderEEWList(){
 // p2pquakeの地震情報と違い観測点別の震度は配信されないため、震源アイコンのみを表示し、
 // カメラもその地点へ寄せる。震源が不明/未取得(推定中の仮定震源で座標が無い等)の場合は
 // 既存の表示をクリアするだけにとどめる。
+// 予想震度の塗り分け(WarnArea)は選択中の1件だけでなく、現在有効な全EEWをまとめて
+// 表示する(renderAllEEWWarnAreaOnMap)。震源アイコン・PS円は選択中のEEWを主役として表示する。
 function showEEWOnMap(evt){
   if(!mapReady){ onMapReady(() => showEEWOnMap(evt)); return; }
-  clearScaleOnMap(); // 震度分布・観測点は地震情報側の表示のため、EEW表示時はクリアしておく
+  clearScaleOnMap(); // 震度分布・観測点は地震情報側の表示のため、EEW表示時はクリアしておく(PS円もここで一旦停止する)
   const hypSrc = map.getSource('hypocenter');
   const valid = evt && isValidLatLng(evt.latitude, evt.longitude);
   if(hypSrc){
     hypSrc.setData({
       type:'FeatureCollection',
-      features: valid ? [{ type:'Feature', geometry:{type:'Point', coordinates:[evt.longitude, evt.latitude]}, properties:{kind:'eew'} }] : []
+      features: valid ? [{ type:'Feature', geometry:{type:'Point', coordinates:[evt.longitude, evt.latitude]}, properties:{kind: evt.isAssumption ? 'eew-assumption' : 'eew'} }] : []
     });
-  }
-  if(valid && !evt.isCancel && settings.showPsCircle){
-    updatePsCircle(evt);
-  } else {
-    clearPsCircleOnMap();
   }
   if(valid && settings.autoFlyTo){
     map.flyTo({ center:[evt.longitude, evt.latitude], zoom: Math.max(map.getZoom(), 6), duration:800 });
+  }
+  // --- 警報区域(WarnArea)の推定震度を塗り分け(現在有効な全EEWをまとめて表示) ---
+  renderAllEEWWarnAreaOnMap();
+  // --- PS円(P波・S波到達円)のアニメーション開始 ---
+  // EEWは発生直後(震源要素が仮定中のことも多い)に配信されるため、地震情報(551)よりも
+  // むしろPS円の実用性が高い。座標と発生時刻(originTime)が取得できていれば表示する。
+  // ただし仮定震源(isAssumption)の場合は規模・深さが未確定のためPS円は描画しない。
+  if(valid && evt.originTime && !evt.isAssumption){
+    startPSCircleAnimation(evt.latitude, evt.longitude, evt.depth, evt.originTime);
   }
 }
 
@@ -2239,13 +2849,24 @@ function addEvent(raw, source){
   }
   renderList();
 
+  // WebSocketで届いた新着(地震情報・津波情報)は、EEWと同様に緊急性が高い情報のため、
+  // 他のタブを見ていても設定(autoSwitchTab)がONなら該当タブへ強制的に切り替える(割り込み表示)。
+  // 履歴補完(source==='history')や、すでに同じタブを見ている場合は切り替えない。
+  if(source === 'ws' && settings.autoSwitchTab && state.activeTab !== evt.type){
+    setActiveTab(evt.type);
+  }
+
   // 津波イベントなら発表区域マップを更新してレイヤーに反映
+  // (latestTsunamiAreasは常に最新化しておく。updateTsunamiLayer自体は軽量な
+  //  setDataのみのため、タブ表示中でなくても呼んでおき、後でタブに戻った時に
+  //  古い状態のまま止まらないようにする)
   if(evt.type === 'tsunami'){
     latestTsunamiAreas = new Map();
     for(const a of evt.areas){
       if(a.grade) latestTsunamiAreas.set(a.name, a.grade);
     }
     updateTsunamiLayer();
+    renderTsunamiHypocenterOnMap(evt);
   }
 
   // マージによって選択中イベントの中身が更新された場合は地図表示も更新する
@@ -2378,6 +2999,19 @@ function initMap(){
       paint:{ 'line-color':'#12131a', 'line-width':0.8 }
     });
 
+    // EEW警報区域の推定震度オーバーレイ(WolfXのWarnAreaを区域ごとに塗り分け)。
+    // 確定した震度分布(saibun-scale)とは別レイヤーにし、EEW表示時のみ使う。
+    // まだ「推定」段階の情報であることを見た目でも区別するため、確定震度より塗りを薄くしている。
+    map.addSource('eew-warnarea-scale', {type:'geojson', data: {type:'FeatureCollection', features:[]}});
+    map.addLayer({
+      id:'eew-warnarea-scale-fill', type:'fill', source:'eew-warnarea-scale',
+      paint:{ 'fill-color': ['get','color'], 'fill-opacity':0.65 }
+    });
+    map.addLayer({
+      id:'eew-warnarea-scale-line', type:'line', source:'eew-warnarea-scale',
+      paint:{ 'line-color':'#12131a', 'line-width':0.8 }
+    });
+
     // --- 世界地図(海外の陸地)。既存レイヤーの下に挿入して重ね順を保つ ---
     const world = await worldPromise;
     map.addSource('world', {type:'geojson', data: world});
@@ -2393,6 +3027,8 @@ function initMap(){
     // --- 津波予報区(発表中の区域のみ着色。常時重ねて表示) ---
     const tsunamiGeo = await tsunamiPromise;
     window.__tsunamiFeatures = tsunamiGeo.features;
+    buildTsunamiAreaCentersFromFeatures(tsunamiGeo.features);
+    populateTsunamiAreaSelectOptions();
     map.addSource('tsunami-forecast', {type:'geojson', data: tsunamiGeo});
     map.addLayer({
       id:'tsunami-forecast-line', type:'line', source:'tsunami-forecast',
@@ -2483,35 +3119,55 @@ function initMap(){
       ctx.stroke();
       return ctx.getImageData(0, 0, size, size);
     }
-    map.addImage('quake-hypocenter-eq', buildHypocenterIcon('#ffe600'));   // 地震情報: 黄色フチ
+    map.addImage('quake-hypocenter-eq', buildHypocenterIcon('#ffe600'));   // 地震情報: 黄色フチ(津波の震源表示もこれを共用)
     map.addImage('quake-hypocenter-eew', buildHypocenterIcon('#ffffff')); // EEW: 白フチ
 
-    // --- P波・S波到達円(JMA走時表2001年式による) ---
-    // P波=先着(青系)、S波=後着で揺れの本体(赤系)。塗りはごく薄く、輪郭を主体に見せる。
-    map.addSource('ps-circle', {type:'geojson', data: {type:'FeatureCollection', features:[]}});
-    map.addLayer({
-      id:'ps-circle-fill', type:'fill', source:'ps-circle',
-      paint:{
-        'fill-color': ['match', ['get','phase'], 'S', '#ff4d4d', '#4da6ff'],
-        'fill-opacity': ['match', ['get','phase'], 'S', 0.06, 0.04]
-      }
-    });
-    map.addLayer({
-      id:'ps-circle-line', type:'line', source:'ps-circle',
-      layout:{ 'line-join':'round' },
-      paint:{
-        'line-color': ['match', ['get','phase'], 'S', '#ff4d4d', '#4da6ff'],
-        'line-width': ['match', ['get','phase'], 'S', 2.2, 1.6],
-        'line-opacity': 0.85,
-        'line-dasharray': ['match', ['get','phase'], 'S', ['literal',[1,0]], ['literal',[2,1.5]]]
-      }
-    });
+    // --- 仮定震源アイコン(ドーナツ型の丸、赤リング+白ふち、Canvasで生成) ---
+    // 仮定震源(震源要素が推定中でMagunitude/Depthが未確定)のEEWは、通常のEEW震源(×印・白フチ)と
+    // 見た目で区別できるよう、中心に穴の空いたドーナツ型の丸アイコンを採用する。
+    // 配色は通常のEEW震源アイコンと同じ「赤(#ff2d2d)に白ふち」とし、
+    // キャンバスサイズ・縁取りの太さも通常アイコンに合わせる。
+    function buildAssumptionHypocenterIcon(){
+      const size = 64;
+      const canvas = document.createElement('canvas');
+      canvas.width = size; canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      const cx = size / 2, cy = size / 2;
+      const outlineWidth = 5;   // 白フチ(内側・外側それぞれの縁取りの太さ)
+      const ringWidth = 10;     // 赤いリング本体の太さ
+      const outerRadius = 20;   // リング外周の半径
+      const innerRadius = outerRadius - ringWidth; // リング内周(=穴)の半径
+      // 外側の白フチ
+      ctx.beginPath();
+      ctx.arc(cx, cy, outerRadius + outlineWidth / 2, 0, Math.PI * 2);
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = outlineWidth;
+      ctx.stroke();
+      // 内側(穴のフチ)の白フチ
+      ctx.beginPath();
+      ctx.arc(cx, cy, innerRadius - outlineWidth / 2, 0, Math.PI * 2);
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = outlineWidth;
+      ctx.stroke();
+      // 赤いリング本体(中心は塗りつぶさず穴を空ける)
+      ctx.beginPath();
+      ctx.arc(cx, cy, (outerRadius + innerRadius) / 2, 0, Math.PI * 2);
+      ctx.strokeStyle = '#ff2d2d';
+      ctx.lineWidth = ringWidth;
+      ctx.stroke();
+      return ctx.getImageData(0, 0, size, size);
+    }
+    map.addImage('quake-hypocenter-eew-assumption', buildAssumptionHypocenterIcon()); // EEW(仮定震源): ドーナツ型・赤リング+白フチ
 
     map.addSource('hypocenter', {type:'geojson', data: {type:'FeatureCollection', features:[]}});
     map.addLayer({
       id:'hypocenter-icon', type:'symbol', source:'hypocenter',
       layout:{
-        'icon-image': ['match', ['get', 'kind'], 'eew', 'quake-hypocenter-eew', 'quake-hypocenter-eq'],
+        'icon-image': ['match', ['get', 'kind'],
+          'eew', 'quake-hypocenter-eew',
+          'eew-assumption', 'quake-hypocenter-eew-assumption',
+          'quake-hypocenter-eq'
+        ],
         'icon-size': [
           'interpolate', ['linear'], ['zoom'],
           4, 0.3,
@@ -2522,6 +3178,29 @@ function initMap(){
         'icon-allow-overlap': true,
         'icon-ignore-placement': true
       }
+    });
+
+    // --- PS円(P波・S波到達円のアニメーション表示) ---
+    // 選択中の地震について、発生時刻からの経過時間に応じてP波面(青)・S波面(赤)が
+    // 震源から同心円状に広がっていく様子を表示する。円のGeoJSONはJS側(updatePSCircles)で
+    // 毎フレーム再計算してsetDataする。
+    map.addSource('ps-circle-p', {type:'geojson', data: {type:'FeatureCollection', features:[]}});
+    map.addSource('ps-circle-s', {type:'geojson', data: {type:'FeatureCollection', features:[]}});
+    map.addLayer({
+      id:'ps-circle-p-fill', type:'fill', source:'ps-circle-p',
+      paint:{ 'fill-color':'#3b82f6', 'fill-opacity':0.08 }
+    });
+    map.addLayer({
+      id:'ps-circle-p-line', type:'line', source:'ps-circle-p',
+      paint:{ 'line-color':'#3b82f6', 'line-width':2.2, 'line-opacity':0.9 }
+    });
+    map.addLayer({
+      id:'ps-circle-s-fill', type:'fill', source:'ps-circle-s',
+      paint:{ 'fill-color':'#ff3b30', 'fill-opacity':0.08 }
+    });
+    map.addLayer({
+      id:'ps-circle-s-line', type:'line', source:'ps-circle-s',
+      paint:{ 'line-color':'#ff3b30', 'line-width':2.2, 'line-opacity':0.9 }
     });
 
     mapReady = true;
@@ -2829,12 +3508,12 @@ function initSettingsPanel(){
   const soundEl = document.getElementById('setting-eew-sound');
   const notifyEl = document.getElementById('setting-browser-notify');
   const flyToEl = document.getElementById('setting-auto-flyto');
-  const psCircleEl = document.getElementById('setting-ps-circle');
+  const switchTabEl = document.getElementById('setting-auto-switch-tab');
 
   soundEl.checked = settings.eewSound;
   notifyEl.checked = settings.browserNotify;
   flyToEl.checked = settings.autoFlyTo;
-  psCircleEl.checked = settings.showPsCircle;
+  switchTabEl.checked = settings.autoSwitchTab;
 
   soundEl.addEventListener('change', () => {
     settings.eewSound = soundEl.checked;
@@ -2871,18 +3550,516 @@ function initSettingsPanel(){
     saveSettings(settings);
   });
 
-  psCircleEl.addEventListener('change', () => {
-    settings.showPsCircle = psCircleEl.checked;
+  switchTabEl.addEventListener('change', () => {
+    settings.autoSwitchTab = switchTabEl.checked;
     saveSettings(settings);
-    if(!settings.showPsCircle){
-      clearPsCircleOnMap();
-    } else {
-      const evt = state.eewEvents.get(state.selectedEEWId);
-      if(state.activeTab === 'eew' && evt) updatePsCircle(evt);
-    }
   });
 }
 initSettingsPanel();
+
+/* ============================================================
+   EEWジェネレータ(設定タブ: テスト用にEEWを手動生成・配信する)
+   ============================================================ */
+// フォームの入力値からWolfXのAPIレスポンスと同じ形のオブジェクト(raw)を組み立て、
+// 実際の受信データと全く同じ経路(upsertEEW)に渡す。これによりEEWタブへのカード表示・
+// 地図への震源表示・受信音/ブラウザ通知・5分自動失効まで、本番の受信EEWと同一に振る舞う。
+//
+// EventIDを指定しなかった場合は現在時刻から自動生成する(WolfXの実データはJST日時ベースの
+// 文字列IDを使うため、それに似た形式にしておく)。同じEventIDを指定して連続で配信すれば、
+// 続報(Serialを増やしたもの)としてマージされる挙動もテストできる。
+function genEventIdFromNow(){
+  const d = new Date();
+  const p = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}`;
+}
+
+// OriginTime/AnnouncedTimeはWolfXの実データに合わせ "yyyy/MM/dd HH:mm:ss" のJST文字列にする。
+// 「今まさに発生した地震」を模擬するテスト用途のため、常に現在時刻を発生時刻として使う。
+function nowAsJstTimeString(){
+  const d = new Date();
+  const p = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}/${p(d.getMonth()+1)}/${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+}
+
+// ランダム生成ボタン用: 日本周辺のもっともらしい震源地名・座標のプリセットから1件選び、
+// M・深さ・震度もそれらしい範囲でランダムに決める。
+const EEW_GEN_PRESETS = [
+  { name:'宮城県沖',       lat:38.2,  lng:142.4 },
+  { name:'福島県沖',       lat:37.3,  lng:141.6 },
+  { name:'茨城県沖',       lat:36.3,  lng:141.0 },
+  { name:'千葉県東方沖',   lat:35.6,  lng:140.7 },
+  { name:'神奈川県西部',   lat:35.3,  lng:139.1 },
+  { name:'相模湾',         lat:35.2,  lng:139.3 },
+  { name:'駿河湾',         lat:34.8,  lng:138.5 },
+  { name:'紀伊水道',       lat:33.9,  lng:135.0 },
+  { name:'豊後水道',       lat:33.0,  lng:132.1 },
+  { name:'日向灘',         lat:31.9,  lng:132.1 },
+  { name:'十勝沖',         lat:41.8,  lng:144.0 },
+  { name:'択捉島南東沖',   lat:44.9,  lng:148.9 },
+  { name:'能登半島沖',     lat:37.5,  lng:137.3 },
+  { name:'和歌山県北部',   lat:34.2,  lng:135.3 },
+];
+const EEW_GEN_INTENSITIES = ['1','2','3','4','5弱','5強','6弱','6強','7'];
+
+function randomChoice(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
+function randomInRange(min, max, decimals){
+  const v = min + Math.random() * (max - min);
+  return decimals != null ? Number(v.toFixed(decimals)) : v;
+}
+
+// --- 震度自動計算(距離減衰式) ---
+// 震源(緯度経度・M)から、各細分区域の代表座標までの震央距離(km)を求め、
+// 気象庁が広く紹介している簡易的な距離減衰式(震源の深さは0km=直下と仮定)で
+// その区域の推定震度(気象庁震度階、連続値)を計算する。
+//   震度 I = M - log10(Δ + 0.001*10^(0.5*M)) - 0.0035*Δ + 0.5
+//   (Δ: 震央距離km。深さ0km仮定のため震央距離=震源距離として扱う簡易版)
+// この式はNIED等でも紹介される概算式で、あくまで「表示用の目安」であることに留意。
+// 算出したIを既存のscaleInfo()と同じ10刻みscale値(10,20,...,70)にスナップして返す。
+function haversineDistanceKm(lat1, lng1, lat2, lng2){
+  const toRad = d => d * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a = Math.sin(dLat/2) ** 2 +
+            Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng/2) ** 2;
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return EARTH_RADIUS_KM * c;
+}
+
+function estimateIntensityScale(mag, distanceKm){
+  if(mag == null || isNaN(mag) || distanceKm == null || isNaN(distanceKm)) return null;
+  const delta = Math.max(distanceKm, 0.1); // 0除算・log(0)回避
+  const I = mag - Math.log10(delta + 0.001 * Math.pow(10, 0.5 * mag)) - 0.0035 * delta + 0.5;
+  // 連続値の震度Iを10刻みのscale値(気象庁配色・階級表示に使う既存の単位系)に変換する。
+  // 0.5刻みでおおよそ震度階級に対応させ、5弱/5強・6弱/6強の境界も概ね再現する。
+  if(I < 0.5) return null; // 震度0未満は「揺れなし」とみなし対象外
+  if(I < 1.5) return 10;
+  if(I < 2.5) return 20;
+  if(I < 3.5) return 30;
+  if(I < 4.5) return 40;
+  if(I < 5.0) return 45;
+  if(I < 5.5) return 50;
+  if(I < 6.0) return 55;
+  if(I < 6.5) return 60;
+  return 70;
+}
+
+// scale値(10刻み) -> WolfX形式の震度ラベル("1","5弱","5強"等)に変換
+function scaleToJmaIntensityLabel(scale){
+  const map = {10:'1', 20:'2', 30:'3', 40:'4', 45:'5弱', 50:'5強', 55:'6弱', 60:'6強', 70:'7'};
+  return map[scale] || null;
+}
+
+// 震源(lat, lng, mag)から全細分区域までの距離減衰で震度を計算し、WolfXのWarnArea形式
+// ({Chiiki, Shindo}の配列)を組み立てる。震度階級1未満(震度0相当)の区域は含めない。
+// 深さは常に0km仮定(距離減衰式が震源直下からの震央距離を前提とした簡易式のため)。
+function buildWarnAreaByAttenuation(lat, lng, mag){
+  if(isNaN(lat) || isNaN(lng) || isNaN(mag)) return [];
+  const results = [];
+  for(const code in AREA_CENTER_BY_CODE){
+    const center = AREA_CENTER_BY_CODE[code];
+    const distanceKm = haversineDistanceKm(lat, lng, center.lat, center.lng);
+    const scale = estimateIntensityScale(mag, distanceKm);
+    if(scale == null) continue;
+    const label = scaleToJmaIntensityLabel(scale);
+    if(!label) continue;
+    const name = AREA_NAME_BY_CODE[code];
+    if(!name) continue;
+    results.push({ Chiiki: name, Shindo: label, _scale: scale });
+  }
+  // 震度が大きい順に並べ、テキスト表示(警報区域一覧)でも上位が目立つようにする
+  results.sort((a, b) => b._scale - a._scale);
+  return results.map(({ Chiiki, Shindo }) => ({ Chiiki, Shindo }));
+}
+
+function fillEEWGeneratorRandom(){
+  const preset = randomChoice(EEW_GEN_PRESETS);
+  // 表示座標にわずかなブレを与え、震源が毎回まったく同じ点にならないようにする
+  const lat = randomInRange(preset.lat - 0.3, preset.lat + 0.3, 2);
+  const lng = randomInRange(preset.lng - 0.3, preset.lng + 0.3, 2);
+  const mag = randomInRange(3.5, 7.5, 1);
+  const depth = Math.round(randomInRange(0, 80, 0));
+  const intensity = randomChoice(EEW_GEN_INTENSITIES);
+
+  document.getElementById('eewgen-eventid').value = '';
+  document.getElementById('eewgen-serial').value = 1;
+  document.getElementById('eewgen-hypocenter').value = preset.name;
+  document.getElementById('eewgen-lat').value = lat;
+  document.getElementById('eewgen-lng').value = lng;
+  document.getElementById('eewgen-mag').value = mag;
+  document.getElementById('eewgen-depth').value = depth;
+  document.getElementById('eewgen-maxintensity').value = intensity;
+  // 震度5弱以上の場合のみ警報(isWarn)を自然な形でONにする
+  const scale = jmaIntensityToScale(intensity);
+  // 長周期地震動階級も、震度5弱以上(高層階で揺れが問題になりうる規模)の場合のみ
+  // それっぽくランダムな階級(1〜3)を入れる。震度が低い場合は「指定しない」のままにする。
+  document.getElementById('eewgen-lpgm').value = (scale != null && scale >= 45)
+    ? String(Math.round(randomInRange(1, 3, 0)))
+    : '';
+  document.getElementById('eewgen-warnarea').value = '';
+  document.getElementById('eewgen-iswarn').checked = (scale != null && scale >= 45);
+  document.getElementById('eewgen-isfinal').checked = false;
+  document.getElementById('eewgen-isassumption').checked = false;
+  document.getElementById('eewgen-iscancel').checked = false;
+  // 海域震源(isSea)はプリセットの地名から妥当な初期値を自動セットする(手動で変更可能)
+  document.getElementById('eewgen-issea').checked = guessIsSeaHypocenter(preset.name);
+}
+
+// フォームの現在値からWolfX形式のraw EEWオブジェクトを組み立てる。
+function buildEEWFromForm(){
+  const eventIdInput = document.getElementById('eewgen-eventid').value.trim();
+  const eventId = eventIdInput || genEventIdFromNow();
+  const serial = document.getElementById('eewgen-serial').value.trim() || '1';
+  const hypocenter = document.getElementById('eewgen-hypocenter').value.trim() || '不明';
+  const lat = parseFloat(document.getElementById('eewgen-lat').value);
+  const lng = parseFloat(document.getElementById('eewgen-lng').value);
+  const mag = parseFloat(document.getElementById('eewgen-mag').value);
+  const depth = parseFloat(document.getElementById('eewgen-depth').value);
+  const maxIntensity = document.getElementById('eewgen-maxintensity').value;
+  const lpgmRaw = document.getElementById('eewgen-lpgm').value;
+  const lpgmClass = lpgmRaw ? parseInt(lpgmRaw, 10) : null;
+  const autoShindo = document.getElementById('eewgen-autoshindo').checked;
+  const warnAreaRaw = document.getElementById('eewgen-warnarea').value.trim();
+  const isWarn = document.getElementById('eewgen-iswarn').checked;
+  const isFinal = document.getElementById('eewgen-isfinal').checked;
+  const isAssumption = document.getElementById('eewgen-isassumption').checked;
+  const isCancel = document.getElementById('eewgen-iscancel').checked;
+  const isSea = document.getElementById('eewgen-issea').checked;
+
+  // 「区域ごとの震度を自動計算する」がONの場合、震源(緯度経度・M、深さ0km仮定)から
+  // 全細分区域までの距離減衰式で震度を計算しWarnAreaを埋める(手入力欄は無視する)。
+  // OFFの場合は従来通り手入力(カンマ区切りの地名、震度指定なし)を使う。
+  const warnArea = autoShindo
+    ? buildWarnAreaByAttenuation(lat, lng, mag)
+    : (warnAreaRaw
+        ? warnAreaRaw.split(',').map(s => s.trim()).filter(Boolean).map(name => ({ Chiiki: name }))
+        : []);
+
+  const originTime = nowAsJstTimeString();
+
+  return {
+    Title: '緊急地震速報(テスト配信)',
+    CodeType: 'EEW',
+    Serial: serial,
+    EventID: eventId,
+    AnnouncedTime: originTime,
+    OriginTime: originTime,
+    Hypocenter: hypocenter,
+    Latitude: isNaN(lat) ? null : lat,
+    Longitude: isNaN(lng) ? null : lng,
+    Magunitude: isNaN(mag) ? null : mag,
+    Depth: isNaN(depth) ? null : depth,
+    MaxIntensity: maxIntensity,
+    LgIntensity: lpgmClass,
+    isWarn,
+    isFinal,
+    isCancel,
+    isAssumption,
+    isTraining: false,
+    isSea,
+    WarnArea: warnArea
+  };
+}
+
+function initEEWGenerator(){
+  const form = document.getElementById('eew-gen-form');
+  const randomBtn = document.getElementById('eewgen-random');
+  if(!form) return;
+
+  // 「区域ごとの震度を自動計算する」トグルに応じて、手入力の警報区域欄を
+  // 有効/無効(見た目でも分かるよう淡色化)にする。
+  const autoShindoEl = document.getElementById('eewgen-autoshindo');
+  const warnAreaFieldEl = document.getElementById('eewgen-warnarea-field');
+  function syncWarnAreaFieldState(){
+    if(warnAreaFieldEl) warnAreaFieldEl.classList.toggle('is-disabled', autoShindoEl.checked);
+  }
+  if(autoShindoEl){
+    autoShindoEl.addEventListener('change', syncWarnAreaFieldState);
+    syncWarnAreaFieldState();
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const raw = buildEEWFromForm();
+    upsertEEW(raw);
+    // 配信後、続報テストをしやすいようEventIDとSerialを引き継いだまま次のSerialへ進める。
+    // (取消報を送った場合は、そのEventIDでのやり取りが終わったとみなしEventIDをクリアする)
+    if(raw.isCancel){
+      document.getElementById('eewgen-eventid').value = '';
+      document.getElementById('eewgen-serial').value = 1;
+    } else {
+      document.getElementById('eewgen-eventid').value = raw.EventID;
+      const nextSerial = (parseInt(raw.Serial, 10) || 1) + 1;
+      document.getElementById('eewgen-serial').value = nextSerial;
+    }
+    // 配信したら自動的にEEWタブへ切り替えて結果を確認しやすくする
+    setActiveTab('eew');
+  });
+
+  randomBtn.addEventListener('click', fillEEWGeneratorRandom);
+}
+initEEWGenerator();
+
+/* ============================================================
+   津波情報ジェネレータ(設定タブ: テスト用に津波情報を選択式で組み立てて配信する)
+   ============================================================ */
+// EEWジェネレータと同様、フォームの入力値からp2pquake(code:552)のレスポンスと
+// 同じ形のオブジェクト(raw)を組み立て、実際の受信データと全く同じ経路(addEvent)に
+// 渡す。これにより津波タブへのサマリー表示・地図への区域塗り分けまで、本番の
+// 受信データと同一に振る舞う。
+// 区域は自由入力ではなくプリセットからの選択式とし、実際の津波予報区名と
+// 一致しない入力によって地図が塗られない、という事故を防ぐ。
+function genTsunamiIdFromNow(){
+  return 'tsunamigen-' + Date.now() + '-' + Math.floor(Math.random() * 100000);
+}
+
+// grade(発表種別)ごとに、選んだ高さ(m)からp2pquake形式のmaxHeight.description相当の
+// 文字列を組み立てる。実データはgradeとdescriptionの整合性が取れているため、
+// ジェネレータでもそれに寄せる(例: 大津波警報で「10m超」等)。
+function tsunamiHeightDescription(heightValue){
+  if(heightValue >= 10) return '10m超';
+  if(heightValue >= 5) return '5m';
+  if(heightValue >= 3) return '3m';
+  if(heightValue >= 1) return '1m';
+  return '0.2m';
+}
+
+// tsunami_forecast.geojsonの全区域(実データの津波予報区。プリセットの12件に限らない)の
+// 概算中心座標。ジェネレータのM値ベース距離減衰計算・手動選択セレクトの両方で使う。
+// 地図読み込み時にbuildTsunamiAreaCentersFromFeatures()で実データから構築される。
+let TSUNAMI_AREA_CENTERS = {};
+
+// GeoJSONジオメトリ(Point/LineString/MultiLineString/Polygon/MultiPolygon等)の
+// 全座標を再帰的に集計し、単純平均による概算中心点[lng, lat]を返す。
+// (extendBoundsWithGeometryと同じ深さテーブルを使う軽量な重心近似)
+function computeGeometryCentroid(geometry){
+  if(!geometry) return null;
+  let lngSum = 0, latSum = 0, count = 0;
+  const walk = (coords, depth) => {
+    if(depth === 0){
+      lngSum += coords[0];
+      latSum += coords[1];
+      count++;
+      return;
+    }
+    for(const c of coords) walk(c, depth - 1);
+  };
+  const depthByType = {
+    Point: 0, MultiPoint: 1, LineString: 1,
+    MultiLineString: 2, Polygon: 2, MultiPolygon: 3
+  };
+  const depth = depthByType[geometry.type];
+  if(depth == null) return null;
+  walk(geometry.coordinates, depth);
+  if(count === 0) return null;
+  return { lng: lngSum / count, lat: latSum / count };
+}
+
+// tsunami_forecast.geojsonの読み込み完了時に呼ばれ、実データの全区域(properties.name)
+// について概算中心座標のテーブルを構築する。ハードコードされたプリセットに限らず、
+// 実際に地図へ塗り分けられる全区域が距離減衰計算・手動選択の対象になる。
+function buildTsunamiAreaCentersFromFeatures(features){
+  const centers = {};
+  for(const f of (features || [])){
+    const name = f.properties && f.properties.name;
+    if(!name || centers[name]) continue;
+    const c = computeGeometryCentroid(f.geometry);
+    if(c) centers[name] = { lat: c.lat, lng: c.lng };
+  }
+  TSUNAMI_AREA_CENTERS = centers;
+}
+
+// 手動選択用<select id="tsunamigen-areas">の選択肢を、実データの全区域名で埋め直す。
+// (地図読み込み前はHTML側のプリセット12件が仮表示されているが、読み込み完了後に
+//  実際の津波予報区一覧へ差し替える)
+function populateTsunamiAreaSelectOptions(){
+  const select = document.getElementById('tsunamigen-areas');
+  if(!select) return;
+  const names = Object.keys(TSUNAMI_AREA_CENTERS).sort((a, b) => a.localeCompare(b, 'ja'));
+  if(names.length === 0) return;
+  const prevSelected = new Set(Array.from(select.selectedOptions).map(o => o.value));
+  select.innerHTML = '';
+  for(const name of names){
+    const opt = document.createElement('option');
+    opt.value = name;
+    opt.textContent = name;
+    if(prevSelected.has(name)) opt.selected = true;
+    select.appendChild(opt);
+  }
+}
+
+// マグニチュードと震央距離(km)から、深さ0km仮定の簡易減衰式で予想津波高さ(m)を算出する。
+// 気象庁の津波警報基準(大津波警報:3m超、津波警報:1〜3m、津波注意報:0.2〜1m)に
+// おおむね対応するよう、Mが大きいほど・震央距離が近いほど高さが増す簡易モデル。
+// あくまでテスト配信用の目安であり、実際の海底地形や伝播特性は考慮していない。
+function estimateTsunamiHeightM(mag, distanceKm){
+  if(mag == null || isNaN(mag) || distanceKm == null || isNaN(distanceKm)) return 0;
+  if(mag < 6.5) return 0; // 津波発生の目安に満たない規模は対象外
+  const delta = Math.max(distanceKm, 1);
+  // 基準値: M8.0・震央距離100kmで約10mになるよう調整した対数減衰式
+  const raw = Math.pow(10, 0.5 * (mag - 6.5)) * (100 / delta) * 0.6;
+  return Math.max(0, raw);
+}
+
+// 高さ(m)からgrade(発表種別)を判定する。気象庁の発表基準に準拠。
+function tsunamiHeightToGrade(heightValue){
+  if(heightValue > 3) return 'MajorWarning';
+  if(heightValue >= 1) return 'Warning';
+  if(heightValue >= 0.2) return 'Watch';
+  return null; // 発表基準未満(区域として含めない)
+}
+
+// grade別の代表高さ(m)。表示・descriptionの粒度をp2pquake実データの刻みに合わせて丸める。
+function snapTsunamiHeight(heightValue, grade){
+  if(grade === 'MajorWarning'){
+    if(heightValue >= 10) return 10;
+    if(heightValue >= 5) return 5;
+    return 3;
+  }
+  if(grade === 'Watch') return 0.2;
+  // Warning
+  if(heightValue >= 3) return 3;
+  return 1;
+}
+
+// 震源(lat, lng, mag、深さ0km仮定)から、プリセット12区域それぞれの震央距離減衰で
+// 予想津波高さ・gradeを算出し、p2pquake形式のareas配列を組み立てる。
+// 発表基準(0.2m)未満の区域は含めない。
+function buildTsunamiAreasByAttenuation(lat, lng, mag, condition){
+  if(isNaN(lat) || isNaN(lng) || isNaN(mag)) return [];
+  const results = [];
+  for(const name in TSUNAMI_AREA_CENTERS){
+    const center = TSUNAMI_AREA_CENTERS[name];
+    const distanceKm = haversineDistanceKm(lat, lng, center.lat, center.lng);
+    const heightValue = estimateTsunamiHeightM(mag, distanceKm);
+    const grade = tsunamiHeightToGrade(heightValue);
+    if(!grade) continue;
+    const snappedHeight = snapTsunamiHeight(heightValue, grade);
+    results.push({
+      name,
+      grade,
+      immediate: condition === 'ただちに津波が到達すると予想',
+      maxHeight: { value: snappedHeight, description: tsunamiHeightDescription(snappedHeight) },
+      firstHeight: condition ? { condition } : {},
+      _rawHeight: heightValue
+    });
+  }
+  // 予想高さが大きい順に並べ、津波タブ・警報区域一覧でも上位が目立つようにする
+  results.sort((a, b) => b._rawHeight - a._rawHeight);
+  return results.map(({ name, grade, immediate, maxHeight, firstHeight }) => ({ name, grade, immediate, maxHeight, firstHeight }));
+}
+
+// フォームの現在値からp2pquake形式のraw津波オブジェクトを組み立てる。
+function buildTsunamiFromForm(){
+  const autoCalc = document.getElementById('tsunamigen-autocalc').checked;
+  const lat = parseFloat(document.getElementById('tsunamigen-lat').value);
+  const lng = parseFloat(document.getElementById('tsunamigen-lng').value);
+  const mag = parseFloat(document.getElementById('tsunamigen-mag').value);
+  const condition = document.getElementById('tsunamigen-condition').value;
+
+  let areas;
+  if(autoCalc){
+    // 震源(緯度経度・M、深さ0km仮定)から全プリセット区域までの距離減衰式で
+    // 予想高さ・gradeを自動計算する(手入力の発表種別・高さ・区域選択は無視する)。
+    areas = buildTsunamiAreasByAttenuation(lat, lng, mag, condition);
+  } else {
+    // OFFの場合は従来通り手動選択(grade・高さ共通、区域は複数選択)を使う。
+    const grade = document.getElementById('tsunamigen-grade').value;
+    const heightValue = parseFloat(document.getElementById('tsunamigen-height').value);
+    const areasSelect = document.getElementById('tsunamigen-areas');
+    const selectedAreaNames = Array.from(areasSelect.selectedOptions).map(o => o.value);
+    areas = selectedAreaNames.map(name => ({
+      name,
+      grade,
+      immediate: condition === 'ただちに津波が到達すると予想',
+      maxHeight: { value: heightValue, description: tsunamiHeightDescription(heightValue) },
+      firstHeight: condition ? { condition } : {}
+    }));
+  }
+
+  const nowJst = nowAsJstTimeString();
+  return {
+    id: genTsunamiIdFromNow(),
+    code: 552,
+    time: nowJst,
+    // 震源座標は実際のp2pquakeデータには存在しない拡張フィールドだが、
+    // ジェネレータで指定した震源を地図に表示するために自動計算モード時のみ付与する。
+    // (手動モードでは震源を指定しないため付与しない)
+    latitude: autoCalc && !isNaN(lat) ? lat : null,
+    longitude: autoCalc && !isNaN(lng) ? lng : null,
+    areas
+  };
+}
+
+// 「解除報」: 全区域の発表を解除した状態(areas: [])を配信する。
+// 実際のp2pquake配信でも、津波警報等がすべて解除されると areas が空になる。
+function buildTsunamiCancelFromForm(){
+  return {
+    id: genTsunamiIdFromNow(),
+    code: 552,
+    time: nowAsJstTimeString(),
+    areas: []
+  };
+}
+
+function initTsunamiGenerator(){
+  const form = document.getElementById('tsunami-gen-form');
+  const clearBtn = document.getElementById('tsunamigen-clear');
+  if(!form) return;
+
+  // 「区域ごとの予想高さ・発表種別を自動計算する」トグルに応じて、手入力の
+  // grade/高さ/区域選択欄を有効/無効(見た目でも分かるよう淡色化)にする。
+  const autoCalcEl = document.getElementById('tsunamigen-autocalc');
+  const manualFieldEls = [
+    document.getElementById('tsunamigen-grade-field'),
+    document.getElementById('tsunamigen-height-field'),
+    document.getElementById('tsunamigen-areas-field')
+  ];
+  function syncManualFieldState(){
+    manualFieldEls.forEach(el => { if(el) el.classList.toggle('is-disabled', autoCalcEl.checked); });
+  }
+  if(autoCalcEl){
+    autoCalcEl.addEventListener('change', syncManualFieldState);
+    syncManualFieldState();
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const raw = buildTsunamiFromForm();
+    addEvent(raw, 'ws');
+    // 配信したら自動的に津波タブへ切り替えて結果を確認しやすくする
+    setActiveTab('tsunami');
+  });
+
+  clearBtn.addEventListener('click', () => {
+    const raw = buildTsunamiCancelFromForm();
+    addEvent(raw, 'ws');
+    setActiveTab('tsunami');
+  });
+}
+initTsunamiGenerator();
+
+/* ============================================================
+   ジェネレータ種別切り替え(EEW / 津波、設定タブ内でどちらか一方のみ表示)
+   ============================================================ */
+function initGeneratorTypeSwitch(){
+  const eewBtn = document.getElementById('gentype-eew-btn');
+  const tsunamiBtn = document.getElementById('gentype-tsunami-btn');
+  const eewPanel = document.getElementById('gen-panel-eew');
+  const tsunamiPanel = document.getElementById('gen-panel-tsunami');
+  if(!eewBtn || !tsunamiBtn || !eewPanel || !tsunamiPanel) return;
+
+  function setGenType(type){
+    const isEew = type === 'eew';
+    eewBtn.classList.toggle('active', isEew);
+    tsunamiBtn.classList.toggle('active', !isEew);
+    eewPanel.hidden = !isEew;
+    tsunamiPanel.hidden = isEew;
+  }
+
+  eewBtn.addEventListener('click', () => setGenType('eew'));
+  tsunamiBtn.addEventListener('click', () => setGenType('tsunami'));
+}
+initGeneratorTypeSwitch();
 
 init();
 
