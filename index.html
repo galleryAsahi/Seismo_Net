@@ -2526,8 +2526,11 @@ function showEEWOnMap(evt){
   // --- PS円(P波・S波到達円)のアニメーション開始 ---
   // EEWは発生直後(震源要素が仮定中のことも多い)に配信されるため、地震情報(551)よりも
   // むしろPS円の実用性が高い。座標と発生時刻(originTime)が取得できていれば表示する。
-  // ただし仮定震源(isAssumption)の場合は規模・深さが未確定のためPS円は描画しない。
-  if(valid && evt.originTime && !evt.isAssumption){
+  // PLUM法・レベル法などの仮定震源(isAssumption)であっても、仮定された震源座標と
+  // 発生時刻からP波・S波の伝播円を描く演出自体は成立するため、規模(M)未確定を理由に
+  // PS円を止めるのは過剰な制限だった(実装上、深さ未確定時はstartPSCircleAnimation側で
+  // depthKm||0 にフォールバックされる)。仮定震源でもPS円を描画する。
+  if(valid && evt.originTime){
     startPSCircleAnimation(evt.latitude, evt.longitude, evt.depth, evt.originTime);
   }
 }
@@ -4065,6 +4068,7 @@ init();
 
 })();
 </script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
