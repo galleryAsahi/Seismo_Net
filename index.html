@@ -558,6 +558,34 @@ select.eew-gen-input[multiple] option:checked{
 .eew-card.selected{
   box-shadow:0 0 0 2px var(--accent);
 }
+.eew-card{
+  position:relative;
+}
+.eew-cancel-overlay{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,.72);
+  border-radius:12px;
+  color:#fff;
+  font-size:19px;
+  font-weight:900;
+  line-height:1.4;
+  text-align:center;
+  padding:10px 8px;
+  z-index:2;
+  text-shadow:
+    -1.4px -1.4px 0 #000,
+     1.4px -1.4px 0 #000,
+    -1.4px  1.4px 0 #000,
+     1.4px  1.4px 0 #000,
+     0   -1.4px 0 #000,
+     0    1.4px 0 #000,
+    -1.4px  0   0 #000,
+     1.4px  0   0 #000;
+}
 .eew-card-head{
   display:flex;
   align-items:stretch;
@@ -643,8 +671,8 @@ select.eew-gen-input[multiple] option:checked{
 .eew-lpgm-row{
   display:flex;
   align-items:center;
-  justify-content:space-between;
-  gap:8px;
+  justify-content:center;
+  gap:14px;
   padding:6px 12px;
   border-radius:6px;
   background:#6b6e78;
@@ -654,12 +682,14 @@ select.eew-gen-input[multiple] option:checked{
   font-size:13px;
   font-weight:700;
   color:inherit;
+  white-space:nowrap;
 }
 .eew-lpgm-badge{
   font-size:18px;
   font-weight:900;
   line-height:1;
   color:inherit;
+  flex-shrink:0;
 }
 .eew-stats-row{
   display:flex;
@@ -1443,6 +1473,11 @@ function extendBoundsWithGeometry(bounds, geometry){
 
 function renderScaleOnMap(event){
   if(!mapReady) { onMapReady(() => renderScaleOnMap(event)); return; }
+
+  // 地震情報タブは「確定した地震情報」のみを見るためのタブであり、EEW(緊急地震速報)の
+  // 推定震度の塗り分け(WarnArea)はここに混ざってはいけない。EEWタブから移動してきた際に
+  // 前のEEW塗り分けが地図に残ったままにならないよう、まずクリアしておく。
+  clearEEWWarnAreaOnMap();
 
   const points = event.points || [];
 
@@ -2268,16 +2303,20 @@ function normalizeEEW(raw){
 
 // 「地震の発生時刻(OriginTime)から」EEW_TTL_MSを過ぎたエントリを取り除く(5分自動失効)。
 // JMAのEEWは発生から5分程度で最終報として扱われる仕様のため、受信時刻ではなく
-// 発生時刻を基準に判定する。OriginTimeが取得できない場合のみ受信時刻で代用する。
-// isCancel(取消報)を受信した場合は即座に取り除く。
+// 発生時刻を基準に判定する。取消報(isCancel)は取消受信から10秒後に
+// scheduleEEWCancelRemovalで別途取り除かれるため、ここでは対象外とする。
 function pruneExpiredEEW(){
   const now = Date.now();
   let changed = false;
+  let ttlExpired = false; // 5分自動失効(TTL経過)によって取り除かれたエントリがあるか
   for(const [id, evt] of state.eewEvents){
+    if(evt.isCancel) continue; // 取消報は専用タイマー(10秒後)で取り除く
     const baseMs = evt.originTimeMs != null ? evt.originTimeMs : evt.receivedAt;
-    if(evt.isCancel || (now - baseMs) > EEW_TTL_MS){
+    const isTtlExpired = (now - baseMs) > EEW_TTL_MS;
+    if(isTtlExpired){
       state.eewEvents.delete(id);
       changed = true;
+      ttlExpired = true;
       if(state.selectedEEWId === id){
         state.selectedEEWId = null;
         clearScaleOnMap();
@@ -2285,6 +2324,13 @@ function pruneExpiredEEW(){
     }
   }
   if(changed){
+    // 5分自動失効(TTL経過)が適用され、他に残っている有効なEEWイベントが無い場合は、
+    // EEWタブに留まる意味が薄いため地震情報タブへ自動的に移動する。
+    const hasOtherActive = [...state.eewEvents.values()].some(e => !e.isCancel);
+    if(ttlExpired && !hasOtherActive && state.activeTab === 'eew'){
+      setActiveTab('earthquake');
+      return;
+    }
     if(state.activeTab === 'eew') renderList();
     // 失効したEEWがWarnAreaの塗り分けに寄与していた可能性があるため、
     // 表示中(EEW/地震情報タブ)なら合算震度を再計算して塗り直す。
@@ -2292,6 +2338,28 @@ function pruneExpiredEEW(){
   }
 }
 setInterval(pruneExpiredEEW, 10000); // 10秒ごとに失効チェック
+
+// 取消報(isCancel)を受信したEEWを、取り消し表示を10秒間見せてから一覧・地図から取り除く。
+// 同じEventIDに対して複数回呼ばれても(続報として取消が再送された場合等)タイマーは1本だけ
+// 保持されるよう、既存の予約があればクリアしてから再設定する。
+const eewCancelRemovalTimers = new Map();
+function scheduleEEWCancelRemoval(eventId){
+  const existingTimer = eewCancelRemovalTimers.get(eventId);
+  if(existingTimer != null) clearTimeout(existingTimer);
+  const timer = setTimeout(() => {
+    eewCancelRemovalTimers.delete(eventId);
+    const evt = state.eewEvents.get(eventId);
+    if(!evt || !evt.isCancel) return; // 取消報以外に上書きされていた場合は何もしない
+    state.eewEvents.delete(eventId);
+    if(state.selectedEEWId === eventId){
+      state.selectedEEWId = null;
+      clearScaleOnMap();
+    }
+    if(state.activeTab === 'eew') renderList();
+    if(state.activeTab === 'eew' || state.activeTab === 'earthquake') renderAllEEWWarnAreaOnMap();
+  }, 10000);
+  eewCancelRemovalTimers.set(eventId, timer);
+}
 
 // EEWを1件追加/更新する。同じEventID = 同一地震とみなし、既存エントリを上書きする。
 //   - 続報の番号(Serial)が既存より古い/同じ場合は無視する(WSの再送や順序前後によって
@@ -2332,13 +2400,21 @@ function upsertEEW(raw){
   const shouldInterrupt = settings.autoSwitchTab && state.activeTab !== 'eew';
 
   if(evt.isCancel){
-    state.eewEvents.delete(evt.eventId); // 取消報は即座に消す
+    // 取消報を受信しても即座には消さず、画像のような「取り消しされました」の
+    // オーバーレイを一覧に10秒間表示してから取り除く(removeCancelledEEWAfterDelayで予約)。
+    evt.cancelledAt = Date.now();
+    state.eewEvents.set(evt.eventId, evt);
     if(state.selectedEEWId === evt.eventId){
-      state.selectedEEWId = null;
       clearScaleOnMap();
     }
     // 取消によってWarnArea合算の内容が変わるため、表示中なら塗り直す。
     if(state.activeTab === 'eew' || state.activeTab === 'earthquake') renderAllEEWWarnAreaOnMap();
+    // 他に有効な(取消されていない)EEWが残っていなければ、地震情報タブへ自動的に移動する。
+    const hasOtherActive = [...state.eewEvents.values()].some(e => e.eventId !== evt.eventId && !e.isCancel);
+    if(!hasOtherActive && state.activeTab === 'eew'){
+      setActiveTab('earthquake');
+    }
+    scheduleEEWCancelRemoval(evt.eventId);
   } else {
     state.eewEvents.set(evt.eventId, evt);
     if(shouldInterrupt) setActiveTab('eew');
@@ -2405,7 +2481,7 @@ function renderEEWCard(evt){
   const lpgmRowHtml = lpgmClass != null ? `
     <div class="eew-lpgm-row ${lpgmCls}">
       <div class="eew-lpgm-label">推定最大長周期地震動階級</div>
-      <div class="eew-lpgm-badge">階級${lpgmClass}</div>
+      <div class="eew-lpgm-badge">${lpgmClass}</div>
     </div>
   ` : '';
 
@@ -2471,6 +2547,7 @@ function renderEEWCard(evt){
       `}
       ${eewMessageHtml}
     </div>
+    ${evt.isCancel ? '<div class="eew-cancel-overlay">この緊急地震速報は<br>取り消しされました</div>' : ''}
   `;
   card.style.cursor = 'pointer';
   card.addEventListener('click', () => selectEEW(evt.eventId));
@@ -2552,12 +2629,21 @@ function eventsForTab(tab){
     // 依存しても大抵は保たれるが、ページ境界の取りこぼしやマージ処理の前後関係によって
     // まれに順序が崩れることがある。表示直前に必ずtime降順で並べ直すことで、
     // データ取得側の細かい前後関係に関わらず一覧の時系列を保証する。
-    return state.events
-      .filter(e => e.type === 'earthquake')
-      .slice()
-      .sort((a, b) => (Date.parse(b.time) || 0) - (Date.parse(a.time) || 0));
+    return sortedEarthquakeEvents();
   }
   return []; // eewは今後実装予定のため常に空
+}
+
+// state.events(挿入順)から地震(551)のみを取り出し、発生時刻(time)の新しい順に並べる。
+// 一覧表示(eventsForTab)・デフォルト選択(selectLatestEarthquakeByDefault)・
+// 履歴補完後の選択追従(fillGapFromHistory)など、「一覧の先頭=最新の地震」を
+// 前提とする箇所は必ずこれを使う。state.events自体はunshift/マージの都合で
+// 挿入順と表示順(時系列順)が食い違うことがあるため、配列先頭を直接見てはいけない。
+function sortedEarthquakeEvents(){
+  return state.events
+    .filter(e => e.type === 'earthquake')
+    .slice()
+    .sort((a, b) => (Date.parse(b.time) || 0) - (Date.parse(a.time) || 0));
 }
 
 const EMPTY_STATE_TEXT = {
@@ -2878,11 +2964,16 @@ function addEvent(raw, source){
     renderScaleOnMap(evt.raw);
   }
 
-  // WebSocket配信で来た「地震情報」は、ユーザーの選択状態に関わらず最新へ移動する。
-  // 新規到着はもちろん、既存カードへのマージ更新(震度速報→震源情報→地震情報 等の段階更新)
-  // でも同様に、その最新イベントに選択を切り替える。
+  // WebSocket配信で来た「地震情報」は、それが実際に最新の地震である場合に限り選択を切り替える。
+  // 新規到着はもちろん、既存カードへのマージ更新(震度速報→震源情報→地震情報 等の段階更新)でも
+  // 同様に扱うが、段階更新の配信タイミングは発生時刻の新しい順とは限らない(既に発表済みの
+  // 別の地震より後から詳細情報が届くことがある)ため、発生時刻(sortedEarthquakeEvents)で
+  // 見て本当に一覧の先頭に来るものだけを自動選択の対象にする。そうでない場合は、より新しい
+  // 地震が既に選択されている状態を優先し、選択を奪わない。
   if(source === 'ws' && evt.type === 'earthquake'){
-    if(state.selectedId !== evt.id || mergedFromLive){
+    const latestEarthquake = sortedEarthquakeEvents()[0];
+    const isActuallyLatest = latestEarthquake && latestEarthquake.id === evt.id;
+    if(isActuallyLatest && (state.selectedId !== evt.id || mergedFromLive)){
       selectEvent(evt.id);
     }
   }
@@ -3349,8 +3440,23 @@ async function fillGapFromHistory(){
     if(!res.ok) return;
     const list = await res.json();
     const ordered = [...list].sort((a,b) => new Date(a.time) - new Date(b.time));
+    let addedAny = false;
     for(const raw of ordered){
-      if(!state.seenIds.has(eqId(raw))) addEvent(raw, 'history');
+      if(!state.seenIds.has(eqId(raw))){
+        addEvent(raw, 'history');
+        addedAny = true;
+      }
+    }
+    // 履歴補完(source:'history')はaddEvent内では選択を奪わない仕様のため、
+    // 再接続中にWSを介さず新しい地震が紛れ込むと、古い地震が選択されたまま
+    // リスト先頭には新しい地震が並ぶ「選択とリスト先頭がズレる」状態になりうる。
+    // 補完で1件でも追加があった場合は、地震情報タブの選択を最新の地震に合わせ直す。
+    if(addedAny){
+      const latestEarthquake = sortedEarthquakeEvents()[0];
+      if(latestEarthquake && state.selectedId !== latestEarthquake.id){
+        selectEvent(latestEarthquake.id);
+        if(state.activeTab === 'earthquake') renderScaleOnMap(latestEarthquake.raw);
+      }
     }
   }catch(err){
     console.error('補完取得に失敗しました', err);
@@ -3497,7 +3603,7 @@ async function init(){
 // 履歴には地震(551)・津波(552)が混在するため、type==='earthquake' のものだけを対象にする。
 function selectLatestEarthquakeByDefault(){
   if(state.selectedId != null) return; // 既に何か選択済みなら上書きしない
-  const latest = state.events.find(e => e.type === 'earthquake');
+  const latest = sortedEarthquakeEvents()[0];
   if(latest) selectEvent(latest.id);
 }
 
